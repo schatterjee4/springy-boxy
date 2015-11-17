@@ -11,10 +11,8 @@
     </parent>
 
     <groupId>hm.binkley.boxfuse</groupId>
-    <artifactId>hello</artifactId>
+    <artifactId>springy-boxy</artifactId>
     <version>2-SNAPSHOT</version>
-
-    <name>hello</name>
 
     <properties>
         <!-- @formatter:off -->
@@ -33,9 +31,9 @@
         <maven-dependency-plugin.version>2.10</maven-dependency-plugin.version>
         <maven-enforcer-plugin.version>1.4.1</maven-enforcer-plugin.version>
         <maven-failsafe-plugin.version>2.16</maven-failsafe-plugin.version>
-        <!--<maven-jar-plugin.version>2.6</maven-jar-plugin.version>-->
+        <maven-jar-plugin.version>2.6</maven-jar-plugin.version>
         <maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
-        <!--<maven-jdeps-plugin.version>3.0.0</maven-jdeps-plugin.version>-->
+        <maven-jdeps-plugin.version>3.0.0</maven-jdeps-plugin.version>
         <maven-source-plugin.version>2.4</maven-source-plugin.version>
         <maven-surefire.version>2.18.1</maven-surefire.version>
         <project.build.outputEncoding>${java.charset}</project.build.outputEncoding>
@@ -117,7 +115,6 @@
                 <artifactId>jgitflow-maven-plugin</artifactId>
                 <version>${jgitflow-maven-plugin.version}</version>
             </plugin>
-            <!-- TODO: Until Spring Boot and friends cleans this up
             <plugin>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <version>${maven-enforcer-plugin.version}</version>
@@ -154,7 +151,6 @@
                     </execution>
                 </executions>
             </plugin>
-            -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
@@ -222,7 +218,6 @@
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
-            <!-- TODO: Spring?
             <plugin>
                 <artifactId>maven-jdeps-plugin</artifactId>
                 <version>${maven-jdeps-plugin.version}</version>
@@ -235,7 +230,6 @@
                     </execution>
                 </executions>
             </plugin>
-            -->
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire.version}</version>
@@ -312,7 +306,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- TODO: Spring?
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>${maven-jar-plugin.version}</version>
@@ -324,7 +317,6 @@
                     </execution>
                 </executions>
             </plugin>
-            -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
