@@ -11,6 +11,54 @@
     <artifactId>springy-boxy</artifactId>
     <version>2</version>
 
+    <name>Springy-Boxy</name>
+    <description>Spring/Boxfuse demo</description>
+    <url>http://binkley.blogspot.com</url>
+    <inceptionYear>2015</inceptionYear>
+
+    <licenses>
+        <license>
+            <name>Public Domain</name>
+            <url>http://unlicense.org/</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <issueManagement>
+        <system>Github</system>
+        <url>https://github.com/binkley/springy-boxy/issues</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>Travis</system>
+        <url>https://travis-ci.org/binkley/springy-boxy</url>
+    </ciManagement>
+
+    <scm>
+        <connection>scm:git:git://github.com/binkley/springy-boxy.git</connection>
+        <developerConnection>scm:git:git@github.com:binkley/springy-boxy.git
+        </developerConnection>
+        <url>https://github.com/binkley/springy-boxy</url>
+    </scm>
+
+    <organization>
+        <name>binkley's BLOG</name>
+        <url>http://binkley.blogspot.com</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <id>binkley</id>
+            <name>B. K. Oxley (binkley)</name>
+            <email>binkley@alumni.rice.edu</email>
+            <organization>The Oxley Family</organization>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
+
     <properties>
         <!-- @formatter:off -->
         <buildplan-maven-plugin.version>1.1</buildplan-maven-plugin.version>
