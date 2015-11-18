@@ -9,7 +9,7 @@
 
     <groupId>hm.binkley.boxfuse</groupId>
     <artifactId>springy-boxy</artifactId>
-    <version>2</version>
+    <version>3-SNAPSHOT</version>
 
     <name>Springy-Boxy</name>
     <description>Spring/Boxfuse demo</description>
