@@ -325,6 +325,7 @@
                     <charset>${java.charset}</charset>
                     <keywords>true</keywords>
                     <linksource>true</linksource>
+                    <quiet>true</quiet>
                     <tags>
                         <tag>
                             <name>todo</name>
