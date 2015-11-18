@@ -10,6 +10,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static hm.binkley.boxfuse.HelloWorldController.PATH;
+import static java.lang.String.format;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -30,8 +32,9 @@ public class HelloWorldControllerTest {
     @Test
     public void getHello()
             throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/hello-world/Brian").
-                accept(APPLICATION_JSON)).
+        mvc.perform(
+                MockMvcRequestBuilders.get(format("%s/%s", PATH, "Brian")).
+                        accept(APPLICATION_JSON)).
                 andExpect(status().isOk()).
                 andExpect(content()
                         .json("{\"id\":1,\"content\":\"Hello, Brian!\"}"));
