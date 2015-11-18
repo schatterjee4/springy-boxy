@@ -18,4 +18,4 @@ script: mvn verify -Dgpg.skip=true
 # TODO: Use boxfuse maven plugin instead
 deploy:
   provider: boxfuse
-  payload: target/springy-boxy-2-SNAPSHOT.jar
+  payload: target/springy-boxy-2.jar
