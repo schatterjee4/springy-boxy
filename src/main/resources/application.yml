@@ -1,0 +1,5 @@
+spring:
+  main:
+    # TODO: banner-mode: off doesn't work?
+    show-banner: false
+    #banner-mode: off
