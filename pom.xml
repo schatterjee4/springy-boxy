@@ -20,6 +20,7 @@
         <extra-enforcer-rules.version>1.0-beta-4</extra-enforcer-rules.version>
         <generateBackupPoms>false</generateBackupPoms>
         <hamcrest.version>2.0.0.0</hamcrest.version>
+        <jsonassert.version>1.2.3</jsonassert.version>
         <java.charset>UTF-8</java.charset>
         <java.version>1.8</java.version>
         <jgitflow-maven-plugin.version>1.0-m5.1</jgitflow-maven-plugin.version>
@@ -130,6 +131,13 @@
                     <artifactId>hamcrest-library</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <!-- TODO: Why didn't Spring get this? -->
+            <groupId>org.skyscreamer</groupId>
+            <artifactId>jsonassert</artifactId>
+            <version>${jsonassert.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
