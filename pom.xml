@@ -321,6 +321,7 @@
             <plugin>
                 <artifactId>maven-jdeps-plugin</artifactId>
                 <version>${maven-jdeps-plugin.version}</version>
+                <!-- TODO: Quiet jdeps -->
                 <executions>
                     <execution>
                         <goals>
