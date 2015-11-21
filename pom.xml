@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -35,7 +37,8 @@
     </ciManagement>
 
     <scm>
-        <connection>scm:git:git://github.com/binkley/springy-boxy.git</connection>
+        <connection>scm:git:git://github.com/binkley/springy-boxy.git
+        </connection>
         <developerConnection>scm:git:git@github.com:binkley/springy-boxy.git
         </developerConnection>
         <url>https://github.com/binkley/springy-boxy</url>
@@ -61,6 +64,7 @@
 
     <properties>
         <!-- @formatter:off -->
+        <assertj.version>3.2.0</assertj.version>
         <buildplan-maven-plugin.version>1.1</buildplan-maven-plugin.version>
         <extra-enforcer-rules.version>1.0-beta-4</extra-enforcer-rules.version>
         <generateBackupPoms>false</generateBackupPoms>
@@ -149,6 +153,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>java-hamcrest</artifactId>
             <version>${hamcrest.version}</version>
@@ -228,8 +237,8 @@
                         <id>enforce</id>
                         <configuration>
                             <rules>
-                                <banCircularDependencies />
-                                <banDuplicateClasses />
+                                <banCircularDependencies/>
+                                <banDuplicateClasses/>
                                 <dependencyConvergence>
                                     <uniqueVersions>true</uniqueVersions>
                                 </dependencyConvergence>
@@ -237,7 +246,7 @@
                                     <maxJdkVersion>${java.version}
                                     </maxJdkVersion>
                                 </enforceBytecodeVersion>
-                                <reactorModuleConvergence />
+                                <reactorModuleConvergence/>
                                 <requireJavaVersion>
                                     <version>${java.version}</version>
                                 </requireJavaVersion>
@@ -292,18 +301,18 @@
                             <goal>resolve</goal>
                         </goals>
                     </execution>
-                    <!-- TODO: Until Spring boot and friends cleans this up
                     <execution>
-                        <id>analyze-or-die</id>
+                        <id>analyze-or-whine</id>
                         <phase>verify</phase>
-                        <configuration>
-                            <failOnWarning>true</failOnWarning>
-                        </configuration>
+                        <!-- TODO: Until Spring boot and friends cleans this up
+                            <configuration>
+                                <failOnWarning>true</failOnWarning>
+                            </configuration>
+                        -->
                         <goals>
                             <goal>analyze</goal>
                         </goals>
                     </execution>
-                    -->
                 </executions>
             </plugin>
             <plugin>
