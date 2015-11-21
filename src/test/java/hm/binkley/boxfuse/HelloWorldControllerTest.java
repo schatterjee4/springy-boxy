@@ -36,7 +36,7 @@ public class HelloWorldControllerTest {
                 MockMvcRequestBuilders.get(format("%s/%s", PATH, "Brian")).
                         accept(APPLICATION_JSON)).
                 andExpect(status().isOk()).
-                andExpect(content()
-                        .json("{\"id\":1,\"content\":\"Hello, Brian!\"}"));
+                andExpect(content().
+                        json("{\"id\":1,\"content\":\"Hello, Brian!\"}"));
     }
 }
