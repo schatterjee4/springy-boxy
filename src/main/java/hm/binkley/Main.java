@@ -1,4 +1,4 @@
-package hm.binkley.boxfuse;
+package hm.binkley;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,8 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @todo Do something useful
  */
 @SpringBootApplication
-public class HelloWorldConfiguration {
+public class Main {
     public static void main(final String... args) {
-        SpringApplication.run(HelloWorldConfiguration.class, args);
+        SpringApplication.run(Main.class, args);
     }
 }

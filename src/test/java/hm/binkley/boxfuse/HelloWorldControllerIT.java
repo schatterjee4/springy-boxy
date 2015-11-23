@@ -1,6 +1,7 @@
 package hm.binkley.boxfuse;
 
 import com.jayway.restassured.RestAssured;
+import hm.binkley.Main;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,10 +18,10 @@ import static org.apache.http.HttpStatus.SC_OK;
 import static org.hamcrest.Matchers.equalTo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(HelloWorldConfiguration.class)
+@SpringApplicationConfiguration(Main.class)
 @IntegrationTest({"server.port:0", "management.port:0"})
 @WebAppConfiguration
-public class HelloWorldControllerIntegrationTest {
+public class HelloWorldControllerIT {
     @Value("${local.server.port}")
     private int port;
 
