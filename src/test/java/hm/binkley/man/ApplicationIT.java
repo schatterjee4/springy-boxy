@@ -1,6 +1,8 @@
 package hm.binkley.man;
 
 import hm.binkley.Main;
+import hm.binkley.man.aspect.EventListenerRecorder;
+import hm.binkley.man.aspect.EventListenerRecorder.Execution;
 import hm.binkley.man.command.StartApplicationCommand;
 import hm.binkley.man.handler.ApplicationStartedEventListener;
 import org.axonframework.commandhandling.CommandBus;
@@ -28,6 +30,8 @@ public class ApplicationIT {
     private CommandBus commandBus;
     @Inject
     private VolatileEventStore eventStore;
+    @Inject
+    private EventListenerRecorder eventListenerRecorder;
 
     @Test
     public void shouldCaptureEvents() {
@@ -44,6 +48,11 @@ public class ApplicationIT {
             assertThat(domainEvent.getAggregateIdentifier()).isEqualTo(id);
         });
         assertThat(visited.get()).isTrue();
+
+        assertThat(eventListenerRecorder).hasSize(1);
+        final Execution execution = eventListenerRecorder.get(0);
+        assertThat(execution.execution.getSignature().getDeclaringType()).
+                isEqualTo(ApplicationStartedEventListener.class);
     }
 
     @Configuration
