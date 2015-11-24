@@ -4,12 +4,14 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.stereotype.Component;
 
 import java.util.function.Consumer;
 
 import static java.lang.System.out;
 
 @Aspect
+@Component
 public class EventListenerAspect {
     private final Consumer<ProceedingJoinPoint> log = out::println;
 

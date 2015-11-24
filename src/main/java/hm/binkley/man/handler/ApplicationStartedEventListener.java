@@ -8,11 +8,9 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-import static lombok.AccessLevel.PACKAGE;
-
 @Component
 public class ApplicationStartedEventListener {
-    @Getter(PACKAGE)
+    @Getter
     private final List<ApplicationStartedEvent> events = new ArrayList<>();
 
     @EventHandler

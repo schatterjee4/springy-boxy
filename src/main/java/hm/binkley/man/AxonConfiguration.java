@@ -6,7 +6,7 @@ import org.axonframework.commandhandling.SimpleCommandBus;
 import org.axonframework.commandhandling.annotation.AggregateAnnotationCommandHandler;
 import org.axonframework.commandhandling.annotation.AnnotationCommandHandlerBeanPostProcessor;
 import org.axonframework.commandhandling.gateway.CommandGateway;
-import org.axonframework.commandhandling.gateway.DefaultCommandGateway;
+import org.axonframework.commandhandling.gateway.CommandGatewayFactoryBean;
 import org.axonframework.commandhandling.interceptors.BeanValidationInterceptor;
 import org.axonframework.eventhandling.EventBus;
 import org.axonframework.eventhandling.SimpleEventBus;
@@ -47,9 +47,13 @@ public class AxonConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
-    public CommandGateway commandGateway(final CommandBus commandBus) {
-        return new DefaultCommandGateway(commandBus);
+    @ConditionalOnMissingBean(CommandGateway.class)
+    public CommandGatewayFactoryBean commandGateway(
+            final CommandBus commandBus) {
+        final CommandGatewayFactoryBean factory
+                = new CommandGatewayFactoryBean();
+        factory.setCommandBus(commandBus);
+        return factory;
     }
 
     @Bean
@@ -62,15 +66,12 @@ public class AxonConfiguration {
     @ConditionalOnMissingBean
     public EventStore eventStore()
             throws IOException {
-        if (true)
-            return new VolatileEventStore();
-
         final SimpleEventFileResolver resolver = new SimpleEventFileResolver(
                 File.createTempFile("axon", "events"));
         return new FileSystemEventStore(resolver);
     }
 
-    @Bean
+    @Bean(name = "applicationRepository")
     @ConditionalOnMissingBean
     public EventSourcingRepository<Application> eventSourcingRepository(
             final EventBus eventBus, final EventStore eventStore) {
