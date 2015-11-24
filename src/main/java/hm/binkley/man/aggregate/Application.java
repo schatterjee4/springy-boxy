@@ -8,13 +8,8 @@ import org.axonframework.commandhandling.annotation.CommandHandler;
 import org.axonframework.eventhandling.annotation.EventHandler;
 import org.axonframework.eventsourcing.annotation.AbstractAnnotatedAggregateRoot;
 import org.axonframework.eventsourcing.annotation.AggregateIdentifier;
+import org.axonframework.unitofwork.UnitOfWork;
 
-/**
- * {@code Application} <strong>needs documentation</strong>.
- *
- * @author <a href="mailto:boxley@thoughtworks.com">Brian Oxley</a>
- * @todo Needs documentation
- */
 public class Application
         extends AbstractAnnotatedAggregateRoot {
     @AggregateIdentifier
@@ -23,7 +18,8 @@ public class Application
     public Application() {}
 
     @CommandHandler
-    public Application(final StartApplicationCommand command) {
+    public Application(final StartApplicationCommand command,
+            final UnitOfWork unitOfWork) {
         apply(ApplicationStartedEvent.builder().
                 id(command.getId()).
                 build());
@@ -35,7 +31,8 @@ public class Application
     }
 
     @CommandHandler
-    public void end(final EndApplicationCommand command) {
+    public void end(final EndApplicationCommand command,
+            final UnitOfWork unitOfWork) {
         apply(ApplicationEndedEvent.builder().
                 id(command.getId()).
                 build());

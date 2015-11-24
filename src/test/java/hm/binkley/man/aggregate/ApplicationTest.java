@@ -11,12 +11,6 @@ import org.junit.Test;
 import static java.util.UUID.randomUUID;
 import static org.axonframework.test.Fixtures.newGivenWhenThenFixture;
 
-/**
- * {@code ApplicationTest} <strong>needs documentation</strong>.
- *
- * @author <a href="mailto:boxley@thoughtworks.com">Brian Oxley</a>
- * @todo Needs documentation
- */
 public class ApplicationTest {
     private FixtureConfiguration<Application> fixture;
 
