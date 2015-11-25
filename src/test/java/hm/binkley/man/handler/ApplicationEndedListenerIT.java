@@ -56,6 +56,8 @@ public class ApplicationEndedListenerIT {
                 map(ApplicationEndedEvent::getId).
                 forEach(eventId -> assertThat(eventId).
                         isEqualTo(id));
+
+        executions.forEach(System.out::println);
     }
 
     private static Class eventClass(final AxonExecution execution) {
