@@ -9,6 +9,7 @@ import org.axonframework.commandhandling.CommandBus;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.inject.Inject;
@@ -19,6 +20,7 @@ import static org.axonframework.commandhandling.GenericCommandMessage.asCommandM
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Main.class)
+@DirtiesContext
 public class ApplicationStartedListenerIT {
     @Inject
     private CommandBus commandBus;
@@ -33,10 +35,10 @@ public class ApplicationStartedListenerIT {
                         id(id).
                         build()));
 
-        assertThat(executions).hasSize(1);
+        assertThat(executions).hasSize(2);
         executions.stream().
-                peek(execution -> assertThat(eventClass(execution)).
-                        isEqualTo(ApplicationStartedListener.class)).
+                filter(execution -> eventClass(execution).
+                        equals(ApplicationStartedListener.class)).
                 map(ApplicationStartedListenerIT::eventFirstArg).
                 map(ApplicationStartedEvent::getId).
                 forEach(eventId -> assertThat(eventId).

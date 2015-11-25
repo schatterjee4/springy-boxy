@@ -345,18 +345,18 @@
                             <goal>resolve</goal>
                         </goals>
                     </execution>
+                        <!-- TODO: Until Spring boot and friends cleans this up
                     <execution>
                         <id>analyze-or-whine</id>
                         <phase>verify</phase>
-                        <!-- TODO: Until Spring boot and friends cleans this up
                             <configuration>
                                 <failOnWarning>true</failOnWarning>
                             </configuration>
-                        -->
                         <goals>
                             <goal>analyze</goal>
                         </goals>
                     </execution>
+                        -->
                 </executions>
             </plugin>
             <plugin>

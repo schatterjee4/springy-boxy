@@ -11,6 +11,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.axonframework.commandhandling.CommandMessage;
 import org.axonframework.domain.EventMessage;
+import org.axonframework.domain.Message;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
@@ -19,14 +21,13 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.String.format;
-import static java.lang.System.out;
-import static java.util.Arrays.asList;
+import static org.slf4j.LoggerFactory.getLogger;
 
 @Aspect
 @Component
 public class AxonFlowRecorder
         extends AbstractList<Execution> {
+    private static final Logger logger = getLogger(AxonFlowRecorder.class);
     private final List<Execution> executions = new ArrayList<>();
 
     @Pointcut(
@@ -38,6 +39,10 @@ public class AxonFlowRecorder
     public void handleCommandMessage() {}
 
     @Pointcut(
+            "@annotation(org.axonframework.commandhandling.annotation.CommandHandler)")
+    public void handleCommand() {}
+
+    @Pointcut(
             "execution(public * org.axonframework.eventhandling.EventBus.publish(..))")
     public void publishEventMessage() {}
 
@@ -45,16 +50,19 @@ public class AxonFlowRecorder
             "execution(public * org.axonframework.eventhandling.EventListener.handle(..))")
     public void handleEventMessage() {}
 
+    @Pointcut(
+            "@annotation(org.axonframework.eventhandling.annotation.EventHandler)")
+    public void handleEvent() {}
+
     @Around("dispatchCommandMessage()")
     public Object logCommandDispatch(final ProceedingJoinPoint pjp)
             throws Throwable {
         final Signature handler = pjp.getSignature();
         final CommandMessage message = (CommandMessage) pjp.getArgs()[0];
-        out.println(
-                format("DISPATCH %s(%s) @ %s", message, message.getPayload(),
-                        handler));
+        logger.debug("DISPATCH {}({}) @ {}", message, message.getPayload(),
+                handler);
 
-        return proceedWithLogging(pjp, "DISPATCH COMMAND");
+        return proceedWithRecording(pjp, "DISPATCH COMMAND", message);
     }
 
     @Around("handleCommandMessage()")
@@ -62,25 +70,39 @@ public class AxonFlowRecorder
             throws Throwable {
         final Signature handler = pjp.getSignature();
         final CommandMessage message = (CommandMessage) pjp.getArgs()[0];
-        out.println(
-                format("HANDLE %s(%s) @ %s", message, message.getPayload(),
-                        handler));
+        logger.debug("HANDLE {}({}) @ {}", message, message.getPayload(),
+                handler);
 
-        return proceedWithLogging(pjp, "HANDLE COMMAND");
+        return proceedWithRecording(pjp, "HANDLE COMMAND", message);
+    }
+
+    @Around("handleCommand()")
+    public Object logCommand(final ProceedingJoinPoint pjp)
+            throws Throwable {
+        final Signature handler = pjp.getSignature();
+        final Object command = pjp.getArgs()[0];
+        logger.debug("HANDLE {} @ {}", command, handler);
+
+        try {
+            final Object proceed = pjp.proceed();
+            logger.debug("SUCCESS");
+            return proceed;
+        } catch (final Throwable t) {
+            logger.warn("FAILED " + t, t);
+            throw t;
+        }
     }
 
     @Around("publishEventMessage()")
     public Object logEventPublish(final ProceedingJoinPoint pjp)
             throws Throwable {
         final Signature handler = pjp.getSignature();
-        final List<EventMessage> messages = asList(
-                (EventMessage[]) pjp.getArgs()[0]);
-        messages.stream().
-                map(message -> format("PUBLISH %s(%s) @ %s", message,
-                        message.getPayload(), handler)).
-                forEach(out::println);
+        final EventMessage[] messages = (EventMessage[]) pjp.getArgs()[0];
+        for (final EventMessage message : messages)
+            logger.debug("PUBLISH {}({}) @ {}", message, message.getPayload(),
+                    handler);
 
-        return proceedWithLogging(pjp, "PUBLISH EVENT");
+        return proceedWithRecording(pjp, "PUBLISH EVENT", messages);
     }
 
     @Around("handleEventMessage()")
@@ -88,24 +110,42 @@ public class AxonFlowRecorder
             throws Throwable {
         final Signature handler = pjp.getSignature();
         final EventMessage message = (EventMessage) pjp.getArgs()[0];
-        out.println(
-                format("HANDLE %s(%s) @ %s", message, message.getPayload(),
-                        handler));
+        logger.debug("HANDLE {}({}) @ {}", message, message.getPayload(),
+                handler);
 
-        return proceedWithLogging(pjp, "HANDLE EVENT");
+        return proceedWithRecording(pjp, "HANDLE EVENT", message);
     }
 
-    private Object proceedWithLogging(final ProceedingJoinPoint pjp,
-            final String tag)
+    @Around("handleEvent()")
+    public Object logEvent(final ProceedingJoinPoint pjp)
+            throws Throwable {
+        final Signature handler = pjp.getSignature();
+        final Object event = pjp.getArgs()[0];
+        logger.debug("HANDLE {} @ {}", event, handler);
+
+        try {
+            final Object proceed = pjp.proceed();
+            logger.debug("SUCCESS");
+            return proceed;
+        } catch (final Throwable t) {
+            logger.warn("FAILED " + t, t);
+            throw t;
+        }
+    }
+
+    private Object proceedWithRecording(final ProceedingJoinPoint pjp,
+            final String tag, final Message... messages)
             throws Throwable {
         try {
             final Object proceed = pjp.proceed();
-            executions.add(Execution.of(pjp, null));
-            out.println("SUCCESS " + tag);
+            for (final Message message : messages)
+                executions.add(Execution.of(message, pjp, null));
+            logger.debug("SUCCESS " + tag);
             return proceed;
         } catch (final Throwable t) {
-            out.println("FAILED " + tag + " " + t);
-            executions.add(Execution.of(pjp, t));
+            logger.warn("FAILED " + tag + " " + t, t);
+            for (final Message message : messages)
+                executions.add(Execution.of(message, pjp, t));
             throw t;
         }
     }
@@ -123,6 +163,8 @@ public class AxonFlowRecorder
     @RequiredArgsConstructor(staticName = "of")
     @ToString
     public static final class Execution {
+        @Nonnull
+        public final Message message;
         @Nonnull
         public final JoinPoint handler;
         @Nullable
