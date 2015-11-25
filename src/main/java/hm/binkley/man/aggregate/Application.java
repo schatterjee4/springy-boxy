@@ -4,14 +4,16 @@ import hm.binkley.man.command.EndApplicationCommand;
 import hm.binkley.man.command.StartApplicationCommand;
 import hm.binkley.man.event.ApplicationEndedEvent;
 import hm.binkley.man.event.ApplicationStartedEvent;
+import lombok.ToString;
 import org.axonframework.commandhandling.annotation.CommandHandler;
 import org.axonframework.eventhandling.annotation.EventHandler;
 import org.axonframework.eventsourcing.annotation.AbstractAnnotatedAggregateRoot;
 import org.axonframework.eventsourcing.annotation.AggregateIdentifier;
 import org.axonframework.unitofwork.UnitOfWork;
 
+@ToString
 public class Application
-        extends AbstractAnnotatedAggregateRoot {
+        extends AbstractAnnotatedAggregateRoot<String> {
     @AggregateIdentifier
     private String id;
 

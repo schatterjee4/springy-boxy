@@ -15,7 +15,7 @@ import org.axonframework.eventsourcing.EventSourcingRepository;
 import org.axonframework.eventstore.EventStore;
 import org.axonframework.eventstore.fs.FileSystemEventStore;
 import org.axonframework.eventstore.fs.SimpleEventFileResolver;
-import org.axonframework.eventstore.supporting.VolatileEventStore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,8 +27,8 @@ import java.io.IOException;
 import static java.util.Collections.singletonList;
 
 @Configuration
-//@ConditionalOnClass(CommandBus.class)
-public class AxonConfiguration {
+@ConditionalOnClass(CommandBus.class)
+public class ApplicationConfiguration {
     @PostConstruct
     public void register()
             throws IOException {
