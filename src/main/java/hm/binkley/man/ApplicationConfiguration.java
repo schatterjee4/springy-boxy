@@ -48,6 +48,16 @@ public class ApplicationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(CommandGateway.class)
+    public CommandGatewayFactoryBean commandGatewayFactoryBean(
+            final CommandBus commandBus) {
+        final CommandGatewayFactoryBean gatewayFactory
+                = new CommandGatewayFactoryBean();
+        gatewayFactory.setCommandBus(commandBus);
+        return gatewayFactory;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(CommandGateway.class)
     public CommandGatewayFactoryBean commandGateway(
             final CommandBus commandBus) {
         final CommandGatewayFactoryBean factory

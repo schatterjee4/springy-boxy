@@ -6,7 +6,7 @@ import hm.binkley.man.aspect.AxonFlowRecorder.Execution;
 import hm.binkley.man.command.EndApplicationCommand;
 import hm.binkley.man.command.StartApplicationCommand;
 import hm.binkley.man.event.ApplicationEndedEvent;
-import org.axonframework.commandhandling.CommandBus;
+import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -17,27 +17,25 @@ import javax.inject.Inject;
 
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.axonframework.commandhandling.GenericCommandMessage.asCommandMessage;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Main.class)
 @DirtiesContext
 public class ApplicationEndedListenerIT {
     @Inject
-    private CommandBus commandBus;
+    private CommandGateway commandGateway;
     @Inject
     private AxonFlowRecorder executions;
 
     @Test
     public void shouldFireOnApplicationEnded() {
         final String id = randomUUID().toString();
-        commandBus
-                .dispatch(asCommandMessage(StartApplicationCommand.builder().
-                        id(id).
-                        build()));
-        commandBus.dispatch(asCommandMessage(EndApplicationCommand.builder().
+        commandGateway.send(StartApplicationCommand.builder().
                 id(id).
-                build()));
+                build());
+        commandGateway.send(EndApplicationCommand.builder().
+                id(id).
+                build());
 
         assertThat(executions).hasSize(4);
         executions.stream().
