@@ -2,12 +2,14 @@ package hm.binkley.man;
 
 import hm.binkley.man.aggregate.Application;
 import org.axonframework.commandhandling.CommandBus;
+import org.axonframework.commandhandling.CommandDispatchInterceptor;
 import org.axonframework.commandhandling.SimpleCommandBus;
 import org.axonframework.commandhandling.annotation.AggregateAnnotationCommandHandler;
 import org.axonframework.commandhandling.annotation.AnnotationCommandHandlerBeanPostProcessor;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.commandhandling.gateway.CommandGatewayFactoryBean;
 import org.axonframework.commandhandling.interceptors.BeanValidationInterceptor;
+import org.axonframework.domain.MetaData;
 import org.axonframework.eventhandling.EventBus;
 import org.axonframework.eventhandling.SimpleEventBus;
 import org.axonframework.eventhandling.annotation.AnnotationEventListenerBeanPostProcessor;
@@ -23,8 +25,11 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static java.util.UUID.randomUUID;
 
 @Configuration
 @ConditionalOnClass(CommandBus.class)
@@ -41,6 +46,11 @@ public class ApplicationConfiguration {
     @ConditionalOnMissingBean
     public CommandBus commandBus() {
         final SimpleCommandBus commandBus = new SimpleCommandBus();
+        commandBus.setDispatchInterceptors(
+                asList(new BeanValidationInterceptor(),
+                        (CommandDispatchInterceptor) message -> message
+                                .andMetaData(new DispatchMetaData(
+                                        message.getMetaData()))));
         commandBus.setHandlerInterceptors(
                 singletonList(new BeanValidationInterceptor()));
         return commandBus;
@@ -108,5 +118,13 @@ public class ApplicationConfiguration {
                 = new AnnotationEventListenerBeanPostProcessor();
         p.setEventBus(eventBus);
         return p;
+    }
+
+    private static class DispatchMetaData
+            extends HashMap<String, Object> {
+        DispatchMetaData(final MetaData metaData) {
+            if (!metaData.containsKey("flow-id"))
+                put("put-id", randomUUID());
+        }
     }
 }

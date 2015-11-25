@@ -1,6 +1,5 @@
 package hm.binkley.man.aspect;
 
-import hm.binkley.man.aspect.AxonFlowRecorder.Execution;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.aspectj.lang.JoinPoint;
@@ -17,18 +16,26 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.List;
+import javax.inject.Inject;
+import java.util.function.Consumer;
 
+import static hm.binkley.man.aspect.AxonFlowRecorder.Action.dispatchCommand;
+import static hm.binkley.man.aspect.AxonFlowRecorder.Action.handleCommand;
+import static hm.binkley.man.aspect.AxonFlowRecorder.Action.handledEvent;
+import static hm.binkley.man.aspect.AxonFlowRecorder.Action.publishEvent;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Aspect
 @Component
-public class AxonFlowRecorder
-        extends AbstractList<Execution> {
+public class AxonFlowRecorder {
     private static final Logger logger = getLogger(AxonFlowRecorder.class);
-    private final List<Execution> executions = new ArrayList<>();
+    private final Consumer<? super AxonExecution> executions;
+
+    @Inject
+    public AxonFlowRecorder(
+            final Consumer<? super AxonExecution> executions) {
+        this.executions = executions;
+    }
 
     @Pointcut(
             "execution(public * org.axonframework.commandhandling.CommandBus.dispatch(..))")
@@ -62,18 +69,14 @@ public class AxonFlowRecorder
         logger.debug("DISPATCH {}({}) @ {}", message, message.getPayload(),
                 handler);
 
-        return proceedWithRecording(pjp, "DISPATCH COMMAND", message);
+        return proceedWithRecording(dispatchCommand, pjp, message);
     }
 
     @Around("handleCommandMessage()")
     public Object logCommandHandle(final ProceedingJoinPoint pjp)
             throws Throwable {
-        final Signature handler = pjp.getSignature();
         final CommandMessage message = (CommandMessage) pjp.getArgs()[0];
-        logger.debug("HANDLE {}({}) @ {}", message, message.getPayload(),
-                handler);
-
-        return proceedWithRecording(pjp, "HANDLE COMMAND", message);
+        return proceedWithRecording(handleCommand, pjp, message);
     }
 
     @Around("handleCommand()")
@@ -81,8 +84,6 @@ public class AxonFlowRecorder
             throws Throwable {
         final Signature handler = pjp.getSignature();
         final Object command = pjp.getArgs()[0];
-        logger.debug("HANDLE {} @ {}", command, handler);
-
         try {
             final Object proceed = pjp.proceed();
             logger.debug("SUCCESS");
@@ -96,24 +97,15 @@ public class AxonFlowRecorder
     @Around("publishEventMessage()")
     public Object logEventPublish(final ProceedingJoinPoint pjp)
             throws Throwable {
-        final Signature handler = pjp.getSignature();
         final EventMessage[] messages = (EventMessage[]) pjp.getArgs()[0];
-        for (final EventMessage message : messages)
-            logger.debug("PUBLISH {}({}) @ {}", message, message.getPayload(),
-                    handler);
-
-        return proceedWithRecording(pjp, "PUBLISH EVENT", messages);
+        return proceedWithRecording(publishEvent, pjp, messages);
     }
 
     @Around("handleEventMessage()")
     public Object logEventHandle(final ProceedingJoinPoint pjp)
             throws Throwable {
-        final Signature handler = pjp.getSignature();
         final EventMessage message = (EventMessage) pjp.getArgs()[0];
-        logger.debug("HANDLE {}({}) @ {}", message, message.getPayload(),
-                handler);
-
-        return proceedWithRecording(pjp, "HANDLE EVENT", message);
+        return proceedWithRecording(handledEvent, pjp, message);
     }
 
     @Around("handleEvent()")
@@ -133,36 +125,34 @@ public class AxonFlowRecorder
         }
     }
 
-    private Object proceedWithRecording(final ProceedingJoinPoint pjp,
-            final String tag, final Message... messages)
+    private Object proceedWithRecording(final Action action,
+            final ProceedingJoinPoint pjp, final Message... messages)
             throws Throwable {
         try {
             final Object proceed = pjp.proceed();
             for (final Message message : messages)
-                executions.add(Execution.of(message, pjp, null));
-            logger.debug("SUCCESS " + tag);
+                executions
+                        .accept(AxonExecution.of(action, message, pjp, null));
             return proceed;
         } catch (final Throwable t) {
-            logger.warn("FAILED " + tag + " " + t, t);
             for (final Message message : messages)
-                executions.add(Execution.of(message, pjp, t));
+                executions.accept(AxonExecution.of(action, message, pjp, t));
             throw t;
         }
     }
 
-    @Override
-    public Execution get(final int index) {
-        return executions.get(index);
-    }
-
-    @Override
-    public int size() {
-        return executions.size();
+    public enum Action {
+        dispatchCommand,
+        handleCommand,
+        publishEvent,
+        handledEvent,
     }
 
     @RequiredArgsConstructor(staticName = "of")
     @ToString
-    public static final class Execution {
+    public static final class AxonExecution {
+        @Nonnull
+        public final Action action;
         @Nonnull
         public final Message message;
         @Nonnull
