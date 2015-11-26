@@ -11,11 +11,13 @@ import org.axonframework.eventsourcing.annotation.AbstractAnnotatedAggregateRoot
 import org.axonframework.eventsourcing.annotation.AggregateIdentifier;
 import org.axonframework.unitofwork.UnitOfWork;
 
+import java.util.UUID;
+
 @ToString
 public class Application
-        extends AbstractAnnotatedAggregateRoot<String> {
+        extends AbstractAnnotatedAggregateRoot<UUID> {
     @AggregateIdentifier
-    private String id;
+    private UUID id;
 
     public Application() {}
 

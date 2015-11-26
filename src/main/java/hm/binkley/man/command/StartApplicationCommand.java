@@ -7,6 +7,7 @@ import lombok.ToString;
 import org.axonframework.commandhandling.annotation.TargetAggregateIdentifier;
 
 import javax.annotation.Nonnull;
+import java.util.UUID;
 
 /**
  * {@code StartCommand} <strong>needs documentation</strong>.
@@ -21,5 +22,5 @@ import javax.annotation.Nonnull;
 public class StartApplicationCommand {
     @Nonnull
     @TargetAggregateIdentifier
-    private final String id;
+    private final UUID id;
 }

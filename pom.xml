@@ -323,6 +323,9 @@
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>${maven-dependency-plugin.version}</version>
+                <configuration>
+                    <silent>true</silent>
+                </configuration>
                 <executions>
                     <execution>
                         <id>record-versions</id>

@@ -5,19 +5,17 @@ import hm.binkley.man.aspect.AxonFlowRecorder.AxonExecution;
 import hm.binkley.man.command.EndApplicationCommand;
 import hm.binkley.man.command.StartApplicationCommand;
 import hm.binkley.man.event.ApplicationEndedEvent;
-import org.assertj.core.api.Assertions;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.inject.Inject;
-import java.util.List;
-import java.util.function.Supplier;
+import java.util.ArrayList;
+import java.util.UUID;
 
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,18 +28,11 @@ public class ApplicationEndedListenerIT {
     @Inject
     private CommandGateway commandGateway;
     @Inject
-    private Supplier<List<AxonExecution>> executionsFactory;
-    private List<AxonExecution> executions;
-
-    @Before
-    public void setUp()
-            throws Exception {
-        executions = executionsFactory.get();
-    }
+    private ArrayList<AxonExecution> executions;
 
     @Test
     public void shouldFireOnApplicationEnded() {
-        final String id = randomUUID().toString();
+        final UUID id = randomUUID();
         commandGateway.send(StartApplicationCommand.builder().
                 id(id).
                 build());
@@ -52,7 +43,7 @@ public class ApplicationEndedListenerIT {
         executions.stream().
                 filter(execution -> eventClass(execution).
                         equals(ApplicationEndedListener.class)).
-                map(ApplicationEndedListenerIT::eventFirstArg).
+                map(ApplicationEndedListenerIT::eventOf).
                 map(ApplicationEndedEvent::getId).
                 forEach(eventId -> assertThat(eventId).
                         isEqualTo(id));
@@ -64,8 +55,9 @@ public class ApplicationEndedListenerIT {
         return execution.handler.getSignature().getDeclaringType();
     }
 
-    private static ApplicationEndedEvent eventFirstArg(
+    private static ApplicationEndedEvent eventOf(
             final AxonExecution execution) {
-        return (ApplicationEndedEvent) execution.handler.getArgs()[0];
+        return execution.<ApplicationEndedEvent>asEvent().
+                orElseThrow(IllegalStateException::new);
     }
 }

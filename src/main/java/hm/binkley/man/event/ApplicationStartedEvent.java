@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 import javax.annotation.Nonnull;
+import java.util.UUID;
 
 /**
  * {@code ApplicationStartedEvent} <strong>needs documentation</strong>.
@@ -19,5 +20,5 @@ import javax.annotation.Nonnull;
 @ToString
 public class ApplicationStartedEvent {
     @Nonnull
-    private final String id;
+    private final UUID id;
 }

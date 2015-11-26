@@ -7,23 +7,22 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * {@code TestConfiguration} <strong>needs documentation</strong>.
  *
  * @author <a href="mailto:boxley@thoughtworks.com">Brian Oxley</a>
  * @todo Needs documentation
+ * @todo Nasty ArrayList because of Spring over-cleverness
  */
 @Configuration
 public class TestConfiguration {
-    private final List<AxonExecution> executions = new ArrayList<>();
+    private final ArrayList<AxonExecution> executions = new ArrayList<>();
 
     @Bean
-    public Supplier<List<AxonExecution>> axonExecutions() {
-        return () -> executions;
+    public ArrayList<AxonExecution> axonExecutions() {
+        return executions;
     }
 
     @Bean

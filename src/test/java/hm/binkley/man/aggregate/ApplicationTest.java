@@ -8,6 +8,8 @@ import org.axonframework.test.FixtureConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.UUID;
+
 import static java.util.UUID.randomUUID;
 import static org.axonframework.test.Fixtures.newGivenWhenThenFixture;
 
@@ -26,7 +28,7 @@ public class ApplicationTest {
 
     @Before
     public void setUpAxon() {
-        final String id = randomUUID().toString();
+        final UUID id = randomUUID();
         startApplication = StartApplicationCommand.builder().
                 id(id).
                 build();

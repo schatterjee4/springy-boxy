@@ -16,6 +16,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -135,85 +136,95 @@ public class AxonFlowRecorder {
     @AllArgsConstructor(access = PRIVATE)
     @SuppressWarnings("unchecked")
     @ToString
-    public static final class AxonExecution<T> {
-        static <T> AxonExecution<T> success(
-                final ExecutionAction executionAction, final T thing,
-                final JoinPoint handler) {
-            return new AxonExecution<>(executionAction, thing, handler, null);
+    public static final class AxonExecution {
+        static AxonExecution success(final ExecutionAction action,
+                final Object thing, final JoinPoint handler) {
+            return new AxonExecution(action, handler, thing, null);
         }
 
-        static <T> AxonExecution<T> failure(
-                final ExecutionAction executionAction, final T thing,
-                final JoinPoint handler, final Throwable failure) {
-            return new AxonExecution<>(executionAction, thing, handler,
-                    failure);
+        static AxonExecution failure(final ExecutionAction action,
+                final Object thing, final JoinPoint handler,
+                final Throwable failure) {
+            return new AxonExecution(action, handler, thing, failure);
         }
 
         @Nonnull
-        public final ExecutionAction executionAction;
-        @Nonnull
-        public final T thing;
+        public final ExecutionAction action;
         @Nonnull
         public final JoinPoint handler;
+        @Nonnull
+        public final Object thing;
         @Nullable
         public Throwable failure; // TODO: Unhappy about mutable
 
-        public <C> CommandMessage<C> asCommandMessage() {
-            switch (executionAction) {
+        public <U> Optional<Message<U>> asMessage() {
+            switch (action) {
             case dispatchCommandMessage:
             case handleCommandMessage:
-                return (CommandMessage<C>) thing;
+            case publishEventMessage:
+            case handleEventMessage:
+                return Optional.of((Message<U>) thing);
             default: // Oh for proper case statements
-                throw new IllegalStateException();
+                return Optional.empty();
             }
         }
 
-        public <C> C asCommand() {
-            switch (executionAction) {
+        public <C> Optional<CommandMessage<C>> asCommandMessage() {
+            switch (action) {
+            case dispatchCommandMessage:
+            case handleCommandMessage:
+                return Optional.of((CommandMessage<C>) thing);
+            default: // Oh for proper case statements
+                return Optional.empty();
+            }
+        }
+
+        public <C> Optional<C> asCommand() {
+            switch (action) {
             case dispatchCommandMessage:
             case handleCommandMessage:
                 return asDomain();
             case handleCommand:
-                return (C) thing;
+                return Optional.of((C) thing);
             default: // Oh for proper case statements
-                throw new IllegalStateException();
+                return Optional.empty();
             }
         }
 
-        public <E> EventMessage<E> asEventMessage() {
-            switch (executionAction) {
+        public <E> Optional<EventMessage<E>> asEventMessage() {
+            switch (action) {
             case publishEventMessage:
             case handleEventMessage:
-                return (EventMessage<E>) thing;
+                return Optional.of((EventMessage<E>) thing);
             default: // Oh for proper case statements
-                throw new IllegalStateException();
+                return Optional.empty();
             }
         }
 
-        public <C> C asEvent() {
-            switch (executionAction) {
+        public <C> Optional<C> asEvent() {
+            switch (action) {
             case publishEventMessage:
             case handleEventMessage:
                 return asDomain();
             case handleEvent:
-                return (C) thing;
+                return Optional.of((C) thing);
             default: // Oh for proper case statements
-                throw new IllegalStateException();
+                return Optional.empty();
             }
         }
 
-        public <U> U asDomain() {
-            switch (executionAction) {
+        public <U> Optional<U> asDomain() {
+            switch (action) {
             case dispatchCommandMessage:
             case handleCommandMessage:
             case publishEventMessage:
             case handleEventMessage: // Oh for proper case statements
-                return ((Message<U>) thing).getPayload();
+                return Optional.of(((Message<U>) thing).getPayload());
             case handleCommand:
             case handleEvent:
-                return (U) thing;
+                return Optional.of((U) thing);
             default:
-                throw new Error("BUG: Missing case");
+                throw new Error("BUG: Missing branch: " + action);
             }
         }
     }
