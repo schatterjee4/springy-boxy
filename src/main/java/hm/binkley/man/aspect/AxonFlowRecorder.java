@@ -1,6 +1,6 @@
 package hm.binkley.man.aspect;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.ToString;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -15,9 +15,10 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
-import static hm.binkley.man.aspect.AxonFlowRecorder.AxonExecution.failure;
 import static hm.binkley.man.aspect.AxonFlowRecorder.AxonExecution.success;
 import static hm.binkley.man.aspect.AxonFlowRecorder.ExecutionAction.dispatchCommandMessage;
 import static hm.binkley.man.aspect.AxonFlowRecorder.ExecutionAction.handleCommand;
@@ -25,6 +26,7 @@ import static hm.binkley.man.aspect.AxonFlowRecorder.ExecutionAction.handleComma
 import static hm.binkley.man.aspect.AxonFlowRecorder.ExecutionAction.handleEvent;
 import static hm.binkley.man.aspect.AxonFlowRecorder.ExecutionAction.handleEventMessage;
 import static hm.binkley.man.aspect.AxonFlowRecorder.ExecutionAction.publishEventMessage;
+import static java.util.stream.Collectors.toList;
 import static lombok.AccessLevel.PRIVATE;
 
 @Aspect
@@ -106,17 +108,17 @@ public class AxonFlowRecorder {
 
     @SafeVarargs
     private final <T> Object proceedWithRecording(
-            final ExecutionAction executionAction,
-            final ProceedingJoinPoint pjp, final T... things)
+            final ExecutionAction action, final ProceedingJoinPoint pjp,
+            final T... things)
             throws Throwable {
+        final List<AxonExecution> executions = Stream.of(things).
+                map(thing -> success(action, thing, pjp)).
+                collect(toList());
         try {
-            final Object proceed = pjp.proceed();
-            for (final T thing : things)
-                executions.accept(success(executionAction, thing, pjp));
-            return proceed;
+            executions.forEach(this.executions);
+            return pjp.proceed();
         } catch (final Throwable t) {
-            for (final T thing : things)
-                executions.accept(failure(executionAction, thing, pjp, t));
+            executions.forEach(execution -> execution.failure = t);
             throw t;
         }
     }
@@ -130,7 +132,7 @@ public class AxonFlowRecorder {
         handleEvent
     }
 
-    @RequiredArgsConstructor(access = PRIVATE)
+    @AllArgsConstructor(access = PRIVATE)
     @SuppressWarnings("unchecked")
     @ToString
     public static final class AxonExecution<T> {
@@ -154,7 +156,7 @@ public class AxonFlowRecorder {
         @Nonnull
         public final JoinPoint handler;
         @Nullable
-        public final Throwable failure;
+        public Throwable failure; // TODO: Unhappy about mutable
 
         public <C> CommandMessage<C> asCommandMessage() {
             switch (executionAction) {

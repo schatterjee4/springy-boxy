@@ -2,7 +2,6 @@ package hm.binkley.man;
 
 import hm.binkley.man.aggregate.Application;
 import org.axonframework.commandhandling.CommandBus;
-import org.axonframework.commandhandling.CommandDispatchInterceptor;
 import org.axonframework.commandhandling.SimpleCommandBus;
 import org.axonframework.commandhandling.annotation.AggregateAnnotationCommandHandler;
 import org.axonframework.commandhandling.annotation.AnnotationCommandHandlerBeanPostProcessor;
@@ -27,13 +26,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 
 @Configuration
 @ConditionalOnClass(CommandBus.class)
 public class ApplicationConfiguration {
+    /** @todo This is pretty horrible */
     @PostConstruct
     public void register()
             throws IOException {
@@ -47,10 +46,7 @@ public class ApplicationConfiguration {
     public CommandBus commandBus() {
         final SimpleCommandBus commandBus = new SimpleCommandBus();
         commandBus.setDispatchInterceptors(
-                asList(new BeanValidationInterceptor(),
-                        (CommandDispatchInterceptor) message -> message
-                                .andMetaData(new DispatchMetaData(
-                                        message.getMetaData()))));
+                singletonList(new BeanValidationInterceptor()));
         commandBus.setHandlerInterceptors(
                 singletonList(new BeanValidationInterceptor()));
         return commandBus;
@@ -58,22 +54,12 @@ public class ApplicationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(CommandGateway.class)
-    public CommandGatewayFactoryBean commandGatewayFactoryBean(
+    public CommandGatewayFactoryBean commandGatewayFactory(
             final CommandBus commandBus) {
         final CommandGatewayFactoryBean gatewayFactory
                 = new CommandGatewayFactoryBean();
         gatewayFactory.setCommandBus(commandBus);
         return gatewayFactory;
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(CommandGateway.class)
-    public CommandGatewayFactoryBean commandGateway(
-            final CommandBus commandBus) {
-        final CommandGatewayFactoryBean factory
-                = new CommandGatewayFactoryBean();
-        factory.setCommandBus(commandBus);
-        return factory;
     }
 
     @Bean
