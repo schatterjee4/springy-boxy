@@ -36,6 +36,7 @@ public class ApplicationStartedListenerIT {
                 id(id).
                 build());
 
+        assertThat(executions).isNotEmpty();
         executions.stream().
                 filter(execution -> eventClass(execution).
                         equals(ApplicationStartedListener.class)).

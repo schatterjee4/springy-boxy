@@ -40,6 +40,7 @@ public class ApplicationEndedListenerIT {
                 id(id).
                 build());
 
+        assertThat(executions).isNotEmpty();
         executions.stream().
                 filter(execution -> eventClass(execution).
                         equals(ApplicationEndedListener.class)).
