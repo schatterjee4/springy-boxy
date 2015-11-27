@@ -160,6 +160,15 @@
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-instrument</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
@@ -348,18 +357,18 @@
                             <goal>resolve</goal>
                         </goals>
                     </execution>
-                        <!-- TODO: Until Spring boot and friends cleans this up
-                    <execution>
-                        <id>analyze-or-whine</id>
-                        <phase>verify</phase>
-                            <configuration>
-                                <failOnWarning>true</failOnWarning>
-                            </configuration>
-                        <goals>
-                            <goal>analyze</goal>
-                        </goals>
-                    </execution>
-                        -->
+                    <!-- TODO: Until Spring boot and friends cleans this up
+                <execution>
+                    <id>analyze-or-whine</id>
+                    <phase>verify</phase>
+                        <configuration>
+                            <failOnWarning>true</failOnWarning>
+                        </configuration>
+                    <goals>
+                        <goal>analyze</goal>
+                    </goals>
+                </execution>
+                    -->
                 </executions>
             </plugin>
             <plugin>
@@ -398,6 +407,11 @@
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>${maven-surefire.version}</version>
+                <configuration>
+                    <argLine>
+                        -javaagent:${org.springframework:spring-instrument:jar}
+                    </argLine>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>

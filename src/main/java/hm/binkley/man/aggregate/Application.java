@@ -10,9 +10,11 @@ import org.axonframework.eventhandling.annotation.EventHandler;
 import org.axonframework.eventsourcing.annotation.AbstractAnnotatedAggregateRoot;
 import org.axonframework.eventsourcing.annotation.AggregateIdentifier;
 import org.axonframework.unitofwork.UnitOfWork;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import java.util.UUID;
 
+@Configurable()
 @ToString
 public class Application
         extends AbstractAnnotatedAggregateRoot<UUID> {
@@ -24,6 +26,7 @@ public class Application
     @CommandHandler
     public Application(final StartApplicationCommand command,
             final UnitOfWork unitOfWork) {
+        System.out.println("Application.Application");
         apply(ApplicationStartedEvent.builder().
                 id(command.getId()).
                 build());
@@ -31,12 +34,14 @@ public class Application
 
     @EventHandler
     public void on(final ApplicationStartedEvent event) {
+        System.out.println("Application.on");
         id = event.getId();
     }
 
     @CommandHandler
     public void end(final EndApplicationCommand command,
             final UnitOfWork unitOfWork) {
+        System.out.println("Application.end");
         apply(ApplicationEndedEvent.builder().
                 id(command.getId()).
                 build());

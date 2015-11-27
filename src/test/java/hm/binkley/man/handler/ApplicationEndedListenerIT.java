@@ -6,7 +6,6 @@ import hm.binkley.man.command.EndApplicationCommand;
 import hm.binkley.man.command.StartApplicationCommand;
 import hm.binkley.man.event.ApplicationEndedEvent;
 import org.axonframework.commandhandling.gateway.CommandGateway;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -47,8 +46,6 @@ public class ApplicationEndedListenerIT {
                 map(ApplicationEndedEvent::getId).
                 forEach(eventId -> assertThat(eventId).
                         isEqualTo(id));
-
-        executions.forEach(System.out::println);
     }
 
     private static Class eventClass(final AxonExecution execution) {

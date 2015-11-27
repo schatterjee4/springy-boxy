@@ -42,11 +42,11 @@ public class AxonFlowRecorder {
     }
 
     @Pointcut(
-            "execution(public * org.axonframework.commandhandling.CommandBus.dispatch(..))")
+            "execution(* org.axonframework.commandhandling.CommandBus.dispatch(..))")
     public void dispatchCommandMessage() {}
 
     @Pointcut(
-            "execution(public * org.axonframework.commandhandling.CommandHandler.handle(..))")
+            "execution(* org.axonframework.commandhandling.CommandHandler.handle(..))")
     public void handleCommandMessage() {}
 
     @Pointcut(
@@ -54,11 +54,11 @@ public class AxonFlowRecorder {
     public void handleCommand() {}
 
     @Pointcut(
-            "execution(public * org.axonframework.eventhandling.EventBus.publish(..))")
+            "execution(* org.axonframework.eventhandling.EventBus.publish(..))")
     public void publishEventMessage() {}
 
     @Pointcut(
-            "execution(public * org.axonframework.eventhandling.EventListener.handle(..))")
+            "execution(* org.axonframework.eventhandling.EventListener.handle(..))")
     public void handleEventMessage() {}
 
     @Pointcut(
