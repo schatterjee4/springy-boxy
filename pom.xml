@@ -197,10 +197,20 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
+<<<<<<< 5298700642c7f08b0b6aa64264b25288cb53ae2f
+=======
+            <version>${hamcrest.version}</version>
+            <scope>test</scope>
+>>>>>>> Give up on Hamcrest 2 until Spring sorts it out.
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
+<<<<<<< 5298700642c7f08b0b6aa64264b25288cb53ae2f
+=======
+            <version>${hamcrest.version}</version>
+            <scope>test</scope>
+>>>>>>> Give up on Hamcrest 2 until Spring sorts it out.
         </dependency>
         <dependency>
             <groupId>junit</groupId>
