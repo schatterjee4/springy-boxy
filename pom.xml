@@ -369,10 +369,10 @@
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
+            <!-- TODO: Jdeps too noisy
             <plugin>
                 <artifactId>maven-jdeps-plugin</artifactId>
                 <version>${maven-jdeps-plugin.version}</version>
-                <!-- TODO: Quiet jdeps -->
                 <executions>
                     <execution>
                         <goals>
@@ -382,6 +382,7 @@
                     </execution>
                 </executions>
             </plugin>
+            -->
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire.version}</version>
