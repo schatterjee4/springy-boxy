@@ -32,11 +32,11 @@ public class ApplicationIT {
                 id(randomUUID()).
                 build());
 
-        for (final AxonExecution execution : executions) {
-            final Optional<Object> flowId = execution.asMessage().
-                    map(Message::getMetaData).
-                    map(md -> md.get("flow-id"));
-            out.println("flow-id = " + flowId);
-        }
+        executions.stream().
+                map(AxonExecution::asMessage).
+                map(o -> o.map(Message::getMetaData)).
+                map(o -> o.map(md -> md.getOrDefault("flow-id", "??"))).
+                map(o -> String.format("flow-id = %s", o)).
+                forEach(out::println);
     }
 }

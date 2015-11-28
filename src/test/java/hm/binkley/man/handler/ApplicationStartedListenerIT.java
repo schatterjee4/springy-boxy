@@ -1,6 +1,7 @@
 package hm.binkley.man.handler;
 
 import hm.binkley.Main;
+import hm.binkley.man.AuditRecord;
 import hm.binkley.man.aspect.AxonFlowRecorder.AxonExecution;
 import hm.binkley.man.command.StartApplicationCommand;
 import hm.binkley.man.event.ApplicationStartedEvent;
@@ -27,6 +28,8 @@ public class ApplicationStartedListenerIT {
     private CommandGateway commandGateway;
     @Inject
     private ArrayList<AxonExecution> executions;
+    @Inject
+    private ArrayList<AuditRecord> records;
 
     @Test
     public void shouldFireOnApplicationStarted() {
@@ -43,6 +46,8 @@ public class ApplicationStartedListenerIT {
                 map(ApplicationStartedEvent::getId).
                 forEach(eventId -> assertThat(eventId).
                         isEqualTo(id));
+
+        records.forEach(System.out::println);
     }
 
     private static Class eventClass(final AxonExecution execution) {

@@ -26,7 +26,6 @@ public class Application
     @CommandHandler
     public Application(final StartApplicationCommand command,
             final UnitOfWork unitOfWork) {
-        System.out.println("Application.Application");
         apply(ApplicationStartedEvent.builder().
                 id(command.getId()).
                 build());
@@ -34,14 +33,12 @@ public class Application
 
     @EventHandler
     public void on(final ApplicationStartedEvent event) {
-        System.out.println("Application.on");
         id = event.getId();
     }
 
     @CommandHandler
     public void end(final EndApplicationCommand command,
             final UnitOfWork unitOfWork) {
-        System.out.println("Application.end");
         apply(ApplicationEndedEvent.builder().
                 id(command.getId()).
                 build());
