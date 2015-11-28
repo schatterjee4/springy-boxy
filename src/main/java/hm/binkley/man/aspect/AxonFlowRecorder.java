@@ -21,14 +21,13 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static hm.binkley.man.aspect.AxonFlowRecorder.AxonExecution.success;
-import static hm.binkley.man.aspect.AxonFlowRecorder.ExecutionAction.dispatchCommandMessage;
 import static hm.binkley.man.aspect.AxonFlowRecorder.ExecutionAction.handleCommand;
-import static hm.binkley.man.aspect.AxonFlowRecorder.ExecutionAction.handleCommandMessage;
 import static hm.binkley.man.aspect.AxonFlowRecorder.ExecutionAction.handleEvent;
 import static hm.binkley.man.aspect.AxonFlowRecorder.ExecutionAction.handleEventMessage;
-import static hm.binkley.man.aspect.AxonFlowRecorder.ExecutionAction.publishEventMessage;
 import static java.util.stream.Collectors.toList;
 import static lombok.AccessLevel.PRIVATE;
+import static org.axonframework.commandhandling.GenericCommandMessage.asCommandMessage;
+import static org.axonframework.domain.GenericEventMessage.asEventMessage;
 
 @Aspect
 @Component
@@ -42,20 +41,8 @@ public class AxonFlowRecorder {
     }
 
     @Pointcut(
-            "execution(* org.axonframework.commandhandling.CommandBus.dispatch(..))")
-    public void dispatchCommandMessage() {}
-
-    @Pointcut(
-            "execution(* org.axonframework.commandhandling.CommandHandler.handle(..))")
-    public void handleCommandMessage() {}
-
-    @Pointcut(
             "@annotation(org.axonframework.commandhandling.annotation.CommandHandler)")
     public void handleCommand() {}
-
-    @Pointcut(
-            "execution(* org.axonframework.eventhandling.EventBus.publish(..))")
-    public void publishEventMessage() {}
 
     @Pointcut(
             "execution(* org.axonframework.eventhandling.EventListener.handle(..))")
@@ -65,32 +52,14 @@ public class AxonFlowRecorder {
             "@annotation(org.axonframework.eventhandling.annotation.EventHandler)")
     public void handleEvent() {}
 
-    @Around("dispatchCommandMessage()")
-    public Object logCommandDispatch(final ProceedingJoinPoint pjp)
-            throws Throwable {
-        final CommandMessage message = (CommandMessage) pjp.getArgs()[0];
-        return proceedWithRecording(dispatchCommandMessage, pjp, message);
-    }
-
-    @Around("handleCommandMessage()")
-    public Object logCommandHandle(final ProceedingJoinPoint pjp)
-            throws Throwable {
-        final CommandMessage message = (CommandMessage) pjp.getArgs()[0];
-        return proceedWithRecording(handleCommandMessage, pjp, message);
-    }
-
     @Around("handleCommand()")
     public Object logCommand(final ProceedingJoinPoint pjp)
             throws Throwable {
         final Object command = pjp.getArgs()[0];
-        return proceedWithRecording(handleCommand, pjp, command);
-    }
-
-    @Around("publishEventMessage()")
-    public Object logEventPublish(final ProceedingJoinPoint pjp)
-            throws Throwable {
-        final EventMessage[] messages = (EventMessage[]) pjp.getArgs()[0];
-        return proceedWithRecording(publishEventMessage, pjp, messages);
+        final Optional<CommandMessage> message = findMessage(
+                CommandMessage.class, pjp.getArgs());
+        return proceedWithRecording(handleCommand, pjp,
+                message.orElseGet(() -> asCommandMessage(command)));
     }
 
     @Around("handleEventMessage()")
@@ -104,15 +73,24 @@ public class AxonFlowRecorder {
     public Object logEvent(final ProceedingJoinPoint pjp)
             throws Throwable {
         final Object event = pjp.getArgs()[0];
-        return proceedWithRecording(handleEvent, pjp, event);
+        final Optional<EventMessage> message = findMessage(EventMessage.class,
+                pjp.getArgs());
+        return proceedWithRecording(handleEvent, pjp,
+                message.orElseGet(() -> asEventMessage(event)));
     }
 
-    @SafeVarargs
-    private final <T> Object proceedWithRecording(
-            final ExecutionAction action, final ProceedingJoinPoint pjp,
-            final T... things)
+    private static <M extends Message> Optional<M> findMessage(
+            final Class<M> type, final Object[] args) {
+        for (int i = 1; i < args.length; ++i)
+            if (type.isAssignableFrom(args[i].getClass()))
+                return Optional.of(type.cast(args[i]));
+        return Optional.empty();
+    }
+
+    private Object proceedWithRecording(final ExecutionAction action,
+            final ProceedingJoinPoint pjp, final Message... messages)
             throws Throwable {
-        final List<AxonExecution> executions = Stream.of(things).
+        final List<AxonExecution> executions = Stream.of(messages).
                 map(thing -> success(action, thing, pjp)).
                 collect(toList());
         try {
@@ -134,16 +112,15 @@ public class AxonFlowRecorder {
     }
 
     @AllArgsConstructor(access = PRIVATE)
-    @SuppressWarnings("unchecked")
     @ToString
     public static final class AxonExecution {
         static AxonExecution success(final ExecutionAction action,
-                final Object thing, final JoinPoint handler) {
+                final Message thing, final JoinPoint handler) {
             return new AxonExecution(action, handler, thing, null);
         }
 
         static AxonExecution failure(final ExecutionAction action,
-                final Object thing, final JoinPoint handler,
+                final Message thing, final JoinPoint handler,
                 final Throwable failure) {
             return new AxonExecution(action, handler, thing, failure);
         }
@@ -153,79 +130,51 @@ public class AxonFlowRecorder {
         @Nonnull
         public final JoinPoint handler;
         @Nonnull
-        public final Object thing;
+        public final Message message;
         @Nullable
         public Throwable failure; // TODO: Unhappy about mutable
 
-        public <U> Optional<Message<U>> asMessage() {
-            switch (action) {
-            case dispatchCommandMessage:
-            case handleCommandMessage:
-            case publishEventMessage:
-            case handleEventMessage:
-                return Optional.of((Message<U>) thing);
-            default: // Oh for proper case statements
-                return Optional.empty();
-            }
+        @SuppressWarnings("unchecked")
+        public <U> Message<U> asMessage() {
+            return (Message<U>) message;
         }
 
+        public <U> U asDomain() {
+            return this.<U>asMessage().getPayload();
+        }
+
+        @SuppressWarnings("unchecked")
         public <C> Optional<CommandMessage<C>> asCommandMessage() {
             switch (action) {
             case dispatchCommandMessage:
             case handleCommandMessage:
-                return Optional.of((CommandMessage<C>) thing);
+            case handleCommand:
+                return Optional.of((CommandMessage<C>) message);
             default: // Oh for proper case statements
                 return Optional.empty();
             }
         }
 
         public <C> Optional<C> asCommand() {
-            switch (action) {
-            case dispatchCommandMessage:
-            case handleCommandMessage:
-                return asDomain();
-            case handleCommand:
-                return Optional.of((C) thing);
-            default: // Oh for proper case statements
-                return Optional.empty();
-            }
+            return this.<C>asCommandMessage().
+                    map(Message::getPayload);
         }
 
+        @SuppressWarnings("unchecked")
         public <E> Optional<EventMessage<E>> asEventMessage() {
             switch (action) {
             case publishEventMessage:
             case handleEventMessage:
-                return Optional.of((EventMessage<E>) thing);
+            case handleEvent:
+                return Optional.of((EventMessage<E>) message);
             default: // Oh for proper case statements
                 return Optional.empty();
             }
         }
 
         public <C> Optional<C> asEvent() {
-            switch (action) {
-            case publishEventMessage:
-            case handleEventMessage:
-                return asDomain();
-            case handleEvent:
-                return Optional.of((C) thing);
-            default: // Oh for proper case statements
-                return Optional.empty();
-            }
-        }
-
-        public <U> Optional<U> asDomain() {
-            switch (action) {
-            case dispatchCommandMessage:
-            case handleCommandMessage:
-            case publishEventMessage:
-            case handleEventMessage: // Oh for proper case statements
-                return Optional.of(((Message<U>) thing).getPayload());
-            case handleCommand:
-            case handleEvent:
-                return Optional.of((U) thing);
-            default:
-                throw new Error("BUG: Missing branch: " + action);
-            }
+            return this.<C>asEventMessage().
+                    map(Message::getPayload);
         }
     }
 }

@@ -13,8 +13,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Optional;
 
+import static java.lang.String.format;
 import static java.lang.System.out;
 import static java.util.UUID.randomUUID;
 
@@ -34,9 +34,9 @@ public class ApplicationIT {
 
         executions.stream().
                 map(AxonExecution::asMessage).
-                map(o -> o.map(Message::getMetaData)).
-                map(o -> o.map(md -> md.getOrDefault("flow-id", "??"))).
-                map(o -> String.format("flow-id = %s", o)).
+                map(Message::getMetaData).
+                map(md -> md.getOrDefault("correlation-identifier", "??")).
+                map(cid -> format("correlation-identifier = %s", cid)).
                 forEach(out::println);
     }
 }

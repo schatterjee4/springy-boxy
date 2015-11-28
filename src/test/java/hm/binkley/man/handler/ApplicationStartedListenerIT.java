@@ -6,6 +6,7 @@ import hm.binkley.man.aspect.AxonFlowRecorder.AxonExecution;
 import hm.binkley.man.command.StartApplicationCommand;
 import hm.binkley.man.event.ApplicationStartedEvent;
 import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.axonframework.domain.Message;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -14,9 +15,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.UUID;
 
+import static java.lang.System.out;
 import static java.util.UUID.randomUUID;
+import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -39,6 +44,8 @@ public class ApplicationStartedListenerIT {
                 build());
 
         assertThat(executions).isNotEmpty();
+        assertThat(records).isNotEmpty();
+
         executions.stream().
                 filter(execution -> eventClass(execution).
                         equals(ApplicationStartedListener.class)).
@@ -47,7 +54,17 @@ public class ApplicationStartedListenerIT {
                 forEach(eventId -> assertThat(eventId).
                         isEqualTo(id));
 
-        records.forEach(System.out::println);
+        final Set<Object> cids = executions.stream().
+                map(AxonExecution::asMessage).
+                map(Message::getMetaData).
+                map(md -> md.getOrDefault("correlation-identifier", "??")).
+                collect(toSet());
+        records.stream().
+                map(r -> r.command).
+                map(Message::getMetaData).
+                map(md -> md.getOrDefault("correlation-identifier", "??")).
+                collect(toCollection(() -> cids));
+        assertThat(cids).hasSize(1);
     }
 
     private static Class eventClass(final AxonExecution execution) {

@@ -4,9 +4,9 @@ import hm.binkley.man.aggregate.Application;
 import org.axonframework.auditing.AuditDataProvider;
 import org.axonframework.auditing.AuditLogger;
 import org.axonframework.auditing.AuditingInterceptor;
+import org.axonframework.auditing.CorrelationAuditDataProvider;
 import org.axonframework.commandhandling.CommandBus;
 import org.axonframework.commandhandling.SimpleCommandBus;
-import org.axonframework.commandhandling.annotation.AggregateAnnotationCommandHandler;
 import org.axonframework.commandhandling.annotation.AnnotationCommandHandlerBeanPostProcessor;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.commandhandling.gateway.CommandGatewayFactoryBean;
@@ -28,7 +28,9 @@ import java.io.IOException;
 import java.util.function.Consumer;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
+import static java.util.UUID.randomUUID;
+import static org.axonframework.commandhandling.annotation.AggregateAnnotationCommandHandler.subscribe;
 
 @Configuration
 @ConditionalOnClass(CommandBus.class)
@@ -38,8 +40,6 @@ public class ApplicationConfiguration {
     public CommandBus commandBus(
             final AuditingInterceptor auditingInterceptor) {
         final SimpleCommandBus commandBus = new SimpleCommandBus();
-        commandBus.setDispatchInterceptors(
-                singletonList(new BeanValidationInterceptor()));
         commandBus.setHandlerInterceptors(
                 asList(new BeanValidationInterceptor(), auditingInterceptor));
         return commandBus;
@@ -59,7 +59,7 @@ public class ApplicationConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public AuditDataProvider auditDataProvider() {
-        return new FlowIdAuditDataProvider();
+        return new CorrelationAuditDataProvider();
     }
 
     @Bean
@@ -81,6 +81,11 @@ public class ApplicationConfiguration {
         final CommandGatewayFactoryBean gatewayFactory
                 = new CommandGatewayFactoryBean();
         gatewayFactory.setCommandBus(commandBus);
+        gatewayFactory.setCommandDispatchInterceptors(
+                new BeanValidationInterceptor(),
+                commandMessage -> commandMessage.withMetaData(
+                        singletonMap("correlation-identifier",
+                                randomUUID())));
         return gatewayFactory;
     }
 
@@ -102,19 +107,19 @@ public class ApplicationConfiguration {
     @Bean
     public AnnotationCommandHandlerBeanPostProcessor annotationCommandHandlerBeanPostProcessor(
             final CommandBus commandBus) {
-        final AnnotationCommandHandlerBeanPostProcessor p
+        final AnnotationCommandHandlerBeanPostProcessor processor
                 = new AnnotationCommandHandlerBeanPostProcessor();
-        p.setCommandBus(commandBus);
-        return p;
+        processor.setCommandBus(commandBus);
+        return processor;
     }
 
     @Bean
     public AnnotationEventListenerBeanPostProcessor annotationEventListenerBeanPostProcessor(
             final EventBus eventBus) {
-        final AnnotationEventListenerBeanPostProcessor p
+        final AnnotationEventListenerBeanPostProcessor processor
                 = new AnnotationEventListenerBeanPostProcessor();
-        p.setEventBus(eventBus);
-        return p;
+        processor.setEventBus(eventBus);
+        return processor;
     }
 
     @Bean(name = "applicationRepository")
@@ -125,8 +130,7 @@ public class ApplicationConfiguration {
                 = new EventSourcingRepository<>(Application.class,
                 eventStore);
         repository.setEventBus(eventBus);
-        AggregateAnnotationCommandHandler
-                .subscribe(Application.class, repository, commandBus);
+        subscribe(Application.class, repository, commandBus);
         return repository;
     }
 }
