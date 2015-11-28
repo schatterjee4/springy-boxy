@@ -35,6 +35,7 @@ public class ApplicationStartedListenerIT {
                 id(id).
                 build());
 
+        assertThat(executions).isNotEmpty();
         executions.stream().
                 filter(execution -> eventClass(execution).
                         equals(ApplicationStartedListener.class)).
@@ -42,8 +43,6 @@ public class ApplicationStartedListenerIT {
                 map(ApplicationStartedEvent::getId).
                 forEach(eventId -> assertThat(eventId).
                         isEqualTo(id));
-
-        executions.forEach(System.out::println);
     }
 
     private static Class eventClass(final AxonExecution execution) {

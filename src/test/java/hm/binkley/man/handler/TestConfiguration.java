@@ -1,5 +1,6 @@
 package hm.binkley.man.handler;
 
+import hm.binkley.man.AuditRecord;
 import hm.binkley.man.aspect.AxonFlowRecorder.AxonExecution;
 import org.axonframework.eventstore.supporting.VolatileEventStore;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +20,7 @@ import java.util.function.Consumer;
 @Configuration
 public class TestConfiguration {
     private final ArrayList<AxonExecution> executions = new ArrayList<>();
+    private final ArrayList<AuditRecord> records = new ArrayList<>();
 
     @Bean
     public ArrayList<AxonExecution> axonExecutions() {
@@ -26,9 +28,17 @@ public class TestConfiguration {
     }
 
     @Bean
+    public ArrayList<AuditRecord> auditRecords() { return records; }
+
+    @Bean
     @Primary
     public Consumer<? super AxonExecution> axonExecutionConsumer() {
         return executions::add;
+    }
+
+    @Bean
+    public Consumer<AuditRecord> auditRecordConsumer() {
+        return records::add;
     }
 
     @Bean

@@ -1,16 +1,16 @@
 package hm.binkley.man;
 
 import hm.binkley.man.aggregate.Application;
+import org.axonframework.auditing.AuditDataProvider;
+import org.axonframework.auditing.AuditLogger;
+import org.axonframework.auditing.AuditingInterceptor;
 import org.axonframework.commandhandling.CommandBus;
-import org.axonframework.commandhandling.CommandDispatchInterceptor;
-import org.axonframework.commandhandling.CommandMessage;
 import org.axonframework.commandhandling.SimpleCommandBus;
 import org.axonframework.commandhandling.annotation.AggregateAnnotationCommandHandler;
 import org.axonframework.commandhandling.annotation.AnnotationCommandHandlerBeanPostProcessor;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.commandhandling.gateway.CommandGatewayFactoryBean;
 import org.axonframework.commandhandling.interceptors.BeanValidationInterceptor;
-import org.axonframework.domain.MetaData;
 import org.axonframework.eventhandling.EventBus;
 import org.axonframework.eventhandling.SimpleEventBus;
 import org.axonframework.eventhandling.annotation.AnnotationEventListenerBeanPostProcessor;
@@ -25,26 +25,53 @@ import org.springframework.context.annotation.Configuration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.function.Consumer;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static java.util.UUID.randomUUID;
 
 @Configuration
 @ConditionalOnClass(CommandBus.class)
 public class ApplicationConfiguration {
     @Bean
     @ConditionalOnMissingBean
-    public CommandBus commandBus() {
+    public CommandBus commandBus(
+            final AuditingInterceptor auditingInterceptor) {
         final SimpleCommandBus commandBus = new SimpleCommandBus();
         commandBus.setDispatchInterceptors(
-                Arrays.<CommandDispatchInterceptor>asList(
-                        new BeanValidationInterceptor(),
-                        new FlowTrackingCommandDispatchInterceptor()));
-        commandBus.setHandlerInterceptors(
                 singletonList(new BeanValidationInterceptor()));
+        commandBus.setHandlerInterceptors(
+                asList(new BeanValidationInterceptor(), auditingInterceptor));
         return commandBus;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public AuditingInterceptor auditingInterceptor(
+            final AuditDataProvider auditDataProvider,
+            final AuditLogger auditLogger) {
+        final AuditingInterceptor interceptor = new AuditingInterceptor();
+        interceptor.setAuditDataProvider(auditDataProvider);
+        interceptor.setAuditLogger(auditLogger);
+        return interceptor;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public AuditDataProvider auditDataProvider() {
+        return new FlowIdAuditDataProvider();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public AuditLogger auditLogger(final Consumer<AuditRecord> records) {
+        return new RecordingAuditLogger(records);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public Consumer<AuditRecord> auditRecordConsumer() {
+        return record -> {};
     }
 
     @Bean
@@ -101,22 +128,5 @@ public class ApplicationConfiguration {
         AggregateAnnotationCommandHandler
                 .subscribe(Application.class, repository, commandBus);
         return repository;
-    }
-
-    private static class FlowTrackingCommandDispatchInterceptor
-            implements CommandDispatchInterceptor {
-        @Override
-        public CommandMessage<?> handle(final CommandMessage<?> message) {
-            return message
-                    .andMetaData(new DispatchMetaData(message.getMetaData()));
-        }
-    }
-
-    private static class DispatchMetaData
-            extends HashMap<String, Object> {
-        DispatchMetaData(final MetaData metaData) {
-            if (!metaData.containsKey("flow-id"))
-                put("flow-id", randomUUID());
-        }
     }
 }
