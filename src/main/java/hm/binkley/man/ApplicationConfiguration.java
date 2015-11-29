@@ -2,7 +2,7 @@ package hm.binkley.man;
 
 import hm.binkley.man.aggregate.Application;
 import hm.binkley.man.audit.AuditRecord;
-import hm.binkley.man.audit.TrackingUnitOfWorkListener;
+import hm.binkley.man.audit.TrackingInterceptor;
 import hm.binkley.man.audit.UnitOfWorkRecord;
 import org.axonframework.auditing.AuditDataProvider;
 import org.axonframework.auditing.AuditLogger;
@@ -41,17 +41,15 @@ public class ApplicationConfiguration {
     @ConditionalOnMissingBean
     public CommandBus commandBus(
             final AuditingInterceptor auditingInterceptor,
-            final Consumer<? super UnitOfWorkRecord> records) {
+            final TrackingInterceptor trackingInterceptor) {
         final SimpleCommandBus commandBus = new SimpleCommandBus();
+        final BeanValidationInterceptor validationInterceptor
+                = new BeanValidationInterceptor();
         commandBus.setDispatchInterceptors(
-                singletonList(new BeanValidationInterceptor()));
+                singletonList(validationInterceptor));
         commandBus.setHandlerInterceptors(
-                asList(new BeanValidationInterceptor(), auditingInterceptor,
-                        (commandMessage, unitOfWork, interceptorChain) -> {
-                            unitOfWork.registerListener(
-                                    new TrackingUnitOfWorkListener(records));
-                            return interceptorChain.proceed();
-                        }));
+                asList(validationInterceptor, auditingInterceptor,
+                        trackingInterceptor));
         return commandBus;
     }
 
