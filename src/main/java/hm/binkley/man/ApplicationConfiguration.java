@@ -1,6 +1,8 @@
 package hm.binkley.man;
 
 import hm.binkley.man.aggregate.Application;
+import hm.binkley.man.audit.AuditRecord;
+import hm.binkley.man.audit.RecordingAuditLogger;
 import org.axonframework.auditing.AuditDataProvider;
 import org.axonframework.auditing.AuditLogger;
 import org.axonframework.auditing.AuditingInterceptor;
@@ -60,12 +62,6 @@ public class ApplicationConfiguration {
     @ConditionalOnMissingBean
     public AuditDataProvider auditDataProvider() {
         return new CorrelationAuditDataProvider();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public AuditLogger auditLogger(final Consumer<AuditRecord> records) {
-        return new RecordingAuditLogger(records);
     }
 
     @Bean

@@ -1,6 +1,6 @@
 package hm.binkley;
 
-import hm.binkley.man.aspect.AxonFlowRecorder.AxonExecution;
+import hm.binkley.man.audit.AxonExecution;
 import org.slf4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

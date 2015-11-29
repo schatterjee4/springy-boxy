@@ -1,8 +1,8 @@
 package hm.binkley.man.handler;
 
 import hm.binkley.Main;
-import hm.binkley.man.AuditRecord;
-import hm.binkley.man.aspect.AxonFlowRecorder.AxonExecution;
+import hm.binkley.man.audit.AuditRecord;
+import hm.binkley.man.audit.AxonExecution;
 import hm.binkley.man.command.EndApplicationCommand;
 import hm.binkley.man.command.StartApplicationCommand;
 import hm.binkley.man.event.ApplicationEndedEvent;

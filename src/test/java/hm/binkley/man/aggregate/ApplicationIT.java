@@ -1,7 +1,7 @@
 package hm.binkley.man.aggregate;
 
 import hm.binkley.Main;
-import hm.binkley.man.aspect.AxonFlowRecorder.AxonExecution;
+import hm.binkley.man.audit.AxonExecution;
 import hm.binkley.man.command.StartApplicationCommand;
 import hm.binkley.man.handler.TestConfiguration;
 import org.axonframework.commandhandling.gateway.CommandGateway;

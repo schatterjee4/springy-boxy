@@ -1,7 +1,7 @@
 package hm.binkley.man.handler;
 
-import hm.binkley.man.AuditRecord;
-import hm.binkley.man.aspect.AxonFlowRecorder.AxonExecution;
+import hm.binkley.man.audit.AuditRecord;
+import hm.binkley.man.audit.AxonExecution;
 import org.axonframework.eventstore.supporting.VolatileEventStore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
