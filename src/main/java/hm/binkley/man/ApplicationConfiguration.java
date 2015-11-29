@@ -34,7 +34,6 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.axonframework.commandhandling.annotation.AggregateAnnotationCommandHandler.subscribe;
 
-// URP
 @Configuration
 @ConditionalOnClass(CommandBus.class)
 public class ApplicationConfiguration {
