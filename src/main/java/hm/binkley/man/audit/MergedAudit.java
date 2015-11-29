@@ -29,20 +29,20 @@ public final class MergedAudit {
     @Nullable
     public final Throwable failureCause;
     @Nonnull
-    public final List<AxonExecution> events;
+    public final List<HandlerExecutionRecord> handlers;
 
     public MergedAudit(@Nonnull final AuditRecord record,
-            @Nonnull final List<AxonExecution> executions) {
+            @Nonnull final List<HandlerExecutionRecord> executions) {
         commandMessage = record.command;
         handler = executions.stream().
-                filter(AxonExecution::isCommand).
+                filter(HandlerExecutionRecord::isCommand).
                 map(e -> e.handler).
                 findFirst().
                 orElse(null);
         returnValue = record.returnValue;
         failureCause = record.failureCause;
-        events = executions.stream().
-                filter(AxonExecution::isEvent).
+        handlers = executions.stream().
+                filter(HandlerExecutionRecord::isEvent).
                 collect(toList());
 
         assert failureCause == lastOf(executions).failureCause

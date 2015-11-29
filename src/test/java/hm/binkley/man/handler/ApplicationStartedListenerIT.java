@@ -2,7 +2,7 @@ package hm.binkley.man.handler;
 
 import hm.binkley.Main;
 import hm.binkley.man.TestConfiguration;
-import hm.binkley.man.audit.AxonExecution;
+import hm.binkley.man.audit.HandlerExecutionRecord;
 import hm.binkley.man.command.StartApplicationCommand;
 import hm.binkley.man.event.ApplicationStartedEvent;
 import org.axonframework.commandhandling.gateway.CommandGateway;
@@ -27,7 +27,7 @@ public class ApplicationStartedListenerIT {
     @Inject
     private CommandGateway commandGateway;
     @Inject
-    private ArrayList<AxonExecution> executions;
+    private ArrayList<HandlerExecutionRecord> executions;
 
     @Test
     public void shouldFireOnApplicationStarted() {
@@ -45,12 +45,12 @@ public class ApplicationStartedListenerIT {
                         isEqualTo(id));
     }
 
-    private static Class eventClass(final AxonExecution execution) {
+    private static Class eventClass(final HandlerExecutionRecord execution) {
         return execution.handler.getSignature().getDeclaringType();
     }
 
     private static ApplicationStartedEvent eventOf(
-            final AxonExecution execution) {
+            final HandlerExecutionRecord execution) {
         return execution.<ApplicationStartedEvent>asEvent().
                 orElseThrow(IllegalStateException::new);
     }

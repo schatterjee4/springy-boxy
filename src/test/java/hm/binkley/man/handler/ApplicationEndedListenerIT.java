@@ -2,7 +2,7 @@ package hm.binkley.man.handler;
 
 import hm.binkley.Main;
 import hm.binkley.man.TestConfiguration;
-import hm.binkley.man.audit.AxonExecution;
+import hm.binkley.man.audit.HandlerExecutionRecord;
 import hm.binkley.man.command.EndApplicationCommand;
 import hm.binkley.man.command.StartApplicationCommand;
 import hm.binkley.man.event.ApplicationEndedEvent;
@@ -28,7 +28,7 @@ public class ApplicationEndedListenerIT {
     @Inject
     private CommandGateway commandGateway;
     @Inject
-    private ArrayList<AxonExecution> executions;
+    private ArrayList<HandlerExecutionRecord> executions;
 
     @Test
     public void shouldFireOnApplicationEnded() {
@@ -49,12 +49,12 @@ public class ApplicationEndedListenerIT {
                         isEqualTo(id));
     }
 
-    private static Class eventClass(final AxonExecution execution) {
+    private static Class eventClass(final HandlerExecutionRecord execution) {
         return execution.handler.getSignature().getDeclaringType();
     }
 
     private static ApplicationEndedEvent eventOf(
-            final AxonExecution execution) {
+            final HandlerExecutionRecord execution) {
         return execution.<ApplicationEndedEvent>asEvent().
                 orElseThrow(IllegalStateException::new);
     }

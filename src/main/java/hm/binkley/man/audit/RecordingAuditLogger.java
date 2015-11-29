@@ -6,6 +6,7 @@ import org.axonframework.commandhandling.CommandMessage;
 import org.axonframework.domain.EventMessage;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.util.List;
 import java.util.function.Consumer;
@@ -23,7 +24,8 @@ import static hm.binkley.man.audit.AuditRecord.recordSuccess;
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class RecordingAuditLogger
         implements AuditLogger {
-    private final Consumer<AuditRecord> records;
+    @Nonnull
+    private final Consumer<? super AuditRecord> records;
 
     @Override
     public void logSuccessful(final CommandMessage<?> command,

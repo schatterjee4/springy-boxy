@@ -2,7 +2,7 @@ package hm.binkley.man.aggregate;
 
 import hm.binkley.Main;
 import hm.binkley.man.audit.AuditRecord;
-import hm.binkley.man.audit.AxonExecution;
+import hm.binkley.man.audit.HandlerExecutionRecord;
 import hm.binkley.man.command.StartApplicationCommand;
 import hm.binkley.man.TestConfiguration;
 import org.axonframework.commandhandling.gateway.CommandGateway;
@@ -29,7 +29,7 @@ public class ApplicationIT {
     @Inject
     private CommandGateway commandGateway;
     @Inject
-    private ArrayList<AxonExecution> executions;
+    private ArrayList<HandlerExecutionRecord> executions;
     @Inject
     private ArrayList<AuditRecord> records;
 
@@ -48,7 +48,7 @@ public class ApplicationIT {
 
     private Stream<String> executions() {
         return executions.stream().
-                map(AxonExecution::getCommandIdentifier);
+                map(HandlerExecutionRecord::getCommandIdentifier);
     }
 
     private Stream<String> records() {

@@ -1,7 +1,7 @@
 package hm.binkley.man.aspect;
 
-import hm.binkley.man.audit.AxonExecution;
-import hm.binkley.man.audit.AxonExecution.ExecutionAction;
+import hm.binkley.man.audit.HandlerExecutionRecord;
+import hm.binkley.man.audit.HandlerExecutionRecord.ExecutionAction;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -16,11 +16,11 @@ import javax.inject.Inject;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import static hm.binkley.man.audit.AxonExecution.ExecutionAction.handleCommand;
-import static hm.binkley.man.audit.AxonExecution.ExecutionAction.handleEvent;
-import static hm.binkley.man.audit.AxonExecution.ExecutionAction.handleEventMessage;
-import static hm.binkley.man.audit.AxonExecution.failure;
-import static hm.binkley.man.audit.AxonExecution.success;
+import static hm.binkley.man.audit.HandlerExecutionRecord.ExecutionAction.handleCommand;
+import static hm.binkley.man.audit.HandlerExecutionRecord.ExecutionAction.handleEvent;
+import static hm.binkley.man.audit.HandlerExecutionRecord.ExecutionAction.handleEventMessage;
+import static hm.binkley.man.audit.HandlerExecutionRecord.failure;
+import static hm.binkley.man.audit.HandlerExecutionRecord.success;
 import static org.axonframework.commandhandling.GenericCommandMessage.asCommandMessage;
 import static org.axonframework.domain.GenericEventMessage.asEventMessage;
 
@@ -28,7 +28,7 @@ import static org.axonframework.domain.GenericEventMessage.asEventMessage;
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class AxonFlowRecorder {
-    private final Consumer<? super AxonExecution> consumer;
+    private final Consumer<? super HandlerExecutionRecord> consumer;
 
     @Pointcut(
             "@annotation(org.axonframework.commandhandling.annotation.CommandHandler)")

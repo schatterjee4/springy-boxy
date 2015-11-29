@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-import static hm.binkley.man.audit.AxonExecution.ExecutionAction.handleCommand;
+import static hm.binkley.man.audit.HandlerExecutionRecord.ExecutionAction.handleCommand;
 import static lombok.AccessLevel.PRIVATE;
 import static org.axonframework.auditing.CorrelationAuditDataProvider.DEFAULT_CORRELATION_KEY;
 
@@ -23,7 +23,7 @@ import static org.axonframework.auditing.CorrelationAuditDataProvider.DEFAULT_CO
  */
 @RequiredArgsConstructor(access = PRIVATE)
 @ToString
-public final class AxonExecution {
+public final class HandlerExecutionRecord {
     @Nonnull
     public final ExecutionAction action;
     @Nonnull
@@ -37,15 +37,15 @@ public final class AxonExecution {
         return (String) message.getMetaData().get(DEFAULT_CORRELATION_KEY);
     }
 
-    public static AxonExecution success(final ExecutionAction action,
+    public static HandlerExecutionRecord success(final ExecutionAction action,
             final Message thing, final JoinPoint handler) {
-        return new AxonExecution(action, handler, thing, null);
+        return new HandlerExecutionRecord(action, handler, thing, null);
     }
 
-    public static AxonExecution failure(final ExecutionAction action,
+    public static HandlerExecutionRecord failure(final ExecutionAction action,
             final Message thing, final JoinPoint handler,
             final Throwable failure) {
-        return new AxonExecution(action, handler, thing, failure);
+        return new HandlerExecutionRecord(action, handler, thing, failure);
     }
 
     public boolean isCommand() {

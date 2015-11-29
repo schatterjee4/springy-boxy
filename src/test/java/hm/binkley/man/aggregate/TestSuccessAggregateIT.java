@@ -3,7 +3,7 @@ package hm.binkley.man.aggregate;
 import hm.binkley.Main;
 import hm.binkley.man.TestConfiguration;
 import hm.binkley.man.audit.AuditRecord;
-import hm.binkley.man.audit.AxonExecution;
+import hm.binkley.man.audit.HandlerExecutionRecord;
 import hm.binkley.man.command.TestSuccessCommand;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.junit.Test;
@@ -29,7 +29,7 @@ public class TestSuccessAggregateIT {
     @Inject
     private CommandGateway commandGateway;
     @Inject
-    private ArrayList<AxonExecution> executions;
+    private ArrayList<HandlerExecutionRecord> executions;
     @Inject
     private ArrayList<AuditRecord> records;
 
@@ -46,7 +46,7 @@ public class TestSuccessAggregateIT {
 
     private Stream<String> executions() {
         return executions.stream().
-                map(AxonExecution::getCommandIdentifier);
+                map(HandlerExecutionRecord::getCommandIdentifier);
     }
 
     private Stream<String> records() {

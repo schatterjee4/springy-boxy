@@ -2,6 +2,8 @@ package hm.binkley.man;
 
 import hm.binkley.man.aggregate.Application;
 import hm.binkley.man.audit.AuditRecord;
+import hm.binkley.man.audit.TrackingUnitOfWorkListener;
+import hm.binkley.man.audit.TrackingUnitOfWorkListener.UnitOfWorkRecord;
 import org.axonframework.auditing.AuditDataProvider;
 import org.axonframework.auditing.AuditLogger;
 import org.axonframework.auditing.AuditingInterceptor;
@@ -38,12 +40,18 @@ public class ApplicationConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public CommandBus commandBus(
-            final AuditingInterceptor auditingInterceptor) {
+            final AuditingInterceptor auditingInterceptor,
+            final Consumer<? super UnitOfWorkRecord> records) {
         final SimpleCommandBus commandBus = new SimpleCommandBus();
         commandBus.setDispatchInterceptors(
                 singletonList(new BeanValidationInterceptor()));
         commandBus.setHandlerInterceptors(
-                asList(new BeanValidationInterceptor(), auditingInterceptor));
+                asList(new BeanValidationInterceptor(), auditingInterceptor,
+                        (commandMessage, unitOfWork, interceptorChain) -> {
+                            unitOfWork.registerListener(
+                                    new TrackingUnitOfWorkListener(records));
+                            return interceptorChain.proceed();
+                        }));
         return commandBus;
     }
 
@@ -66,7 +74,13 @@ public class ApplicationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public Consumer<AuditRecord> auditRecordConsumer() {
+    public Consumer<? super AuditRecord> auditRecordConsumer() {
+        return record -> {};
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public Consumer<? super UnitOfWorkRecord> unitOfWorkRecordConsumer() {
         return record -> {};
     }
 

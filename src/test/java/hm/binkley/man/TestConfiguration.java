@@ -4,7 +4,8 @@ import hm.binkley.man.aggregate.CheckedTestFailureAggregate;
 import hm.binkley.man.aggregate.TestSuccessAggregate;
 import hm.binkley.man.aggregate.UncheckedTestFailureAggregate;
 import hm.binkley.man.audit.AuditRecord;
-import hm.binkley.man.audit.AxonExecution;
+import hm.binkley.man.audit.HandlerExecutionRecord;
+import hm.binkley.man.audit.TrackingUnitOfWorkListener.UnitOfWorkRecord;
 import org.axonframework.commandhandling.CommandBus;
 import org.axonframework.eventhandling.EventBus;
 import org.axonframework.eventsourcing.EventSourcingRepository;
@@ -28,26 +29,34 @@ import static org.axonframework.commandhandling.annotation.AggregateAnnotationCo
  */
 @Configuration
 public class TestConfiguration {
-    private final ArrayList<AxonExecution> executions = new ArrayList<>();
-    private final ArrayList<AuditRecord> records = new ArrayList<>();
+    private final ArrayList<HandlerExecutionRecord> handlerExecutionRecords
+            = new ArrayList<>();
+    private final ArrayList<AuditRecord> auditRecords = new ArrayList<>();
+    private final ArrayList<UnitOfWorkRecord> unitOfWorkRecords
+            = new ArrayList<>();
 
     @Bean
-    public ArrayList<AxonExecution> axonExecutions() {
-        return executions;
+    public ArrayList<HandlerExecutionRecord> axonExecutions() {
+        return handlerExecutionRecords;
     }
 
     @Bean
-    public ArrayList<AuditRecord> auditRecords() { return records; }
+    public ArrayList<AuditRecord> auditRecords() { return auditRecords; }
 
     @Bean
     @Primary
-    public Consumer<? super AxonExecution> axonExecutionConsumer() {
-        return executions::add;
+    public Consumer<? super HandlerExecutionRecord> axonExecutionConsumer() {
+        return handlerExecutionRecords::add;
     }
 
     @Bean
-    public Consumer<AuditRecord> auditRecordConsumer() {
-        return records::add;
+    public Consumer<? super AuditRecord> auditRecordConsumer() {
+        return auditRecords::add;
+    }
+
+    @Bean
+    public Consumer<? super UnitOfWorkRecord> unitOfWorkRecordConsumer() {
+        return unitOfWorkRecords::add;
     }
 
     @Bean
