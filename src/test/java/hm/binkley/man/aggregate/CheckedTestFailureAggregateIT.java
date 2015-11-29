@@ -33,7 +33,7 @@ public class CheckedTestFailureAggregateIT {
     @Rule
     public final SystemOutRule sout = new SystemOutRule().
             enableLog().
-            mute();
+            muteForSuccessfulTests();
 
     @Inject
     private CommandGateway commandGateway;
