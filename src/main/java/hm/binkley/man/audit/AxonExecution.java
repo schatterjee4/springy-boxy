@@ -11,6 +11,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
+import static hm.binkley.man.audit.AxonExecution.ExecutionAction.handleCommand;
 import static lombok.AccessLevel.PRIVATE;
 import static org.axonframework.auditing.CorrelationAuditDataProvider.DEFAULT_CORRELATION_KEY;
 
@@ -45,6 +46,20 @@ public final class AxonExecution {
             final Message thing, final JoinPoint handler,
             final Throwable failure) {
         return new AxonExecution(action, handler, thing, failure);
+    }
+
+    public boolean isCommand() {
+        return handleCommand == action;
+    }
+
+    public boolean isEvent() {
+        switch (action) {
+        case handleEventMessage:
+        case handleEvent:
+            return true;
+        default:
+            return false;
+        }
     }
 
     @SuppressWarnings("unchecked")

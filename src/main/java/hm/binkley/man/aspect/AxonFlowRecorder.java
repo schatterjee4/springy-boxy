@@ -42,6 +42,7 @@ public class AxonFlowRecorder {
             "@annotation(org.axonframework.eventhandling.annotation.EventHandler)")
     public void handleEvent() {}
 
+    /** @todo Never actually called, so handler sigature is lost */
     @Around("handleCommand()")
     public Object logCommand(final ProceedingJoinPoint pjp)
             throws Throwable {
@@ -77,6 +78,7 @@ public class AxonFlowRecorder {
         return Optional.empty();
     }
 
+    /** @todo Events happen before commands in trail */
     private Object proceedWithRecording(final ExecutionAction action,
             final ProceedingJoinPoint pjp, final Message message)
             throws Throwable {

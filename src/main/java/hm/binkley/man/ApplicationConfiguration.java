@@ -113,8 +113,8 @@ public class ApplicationConfiguration {
         return processor;
     }
 
-    @Bean(name = "applicationRepository")
-    public EventSourcingRepository<Application> eventSourcingRepository(
+    @Bean
+    public EventSourcingRepository<Application> applicationRepository(
             final EventBus eventBus, final EventStore eventStore,
             final CommandBus commandBus) {
         final EventSourcingRepository<Application> repository

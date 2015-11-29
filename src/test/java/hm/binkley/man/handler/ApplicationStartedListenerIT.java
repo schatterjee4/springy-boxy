@@ -1,6 +1,7 @@
 package hm.binkley.man.handler;
 
 import hm.binkley.Main;
+import hm.binkley.man.TestConfiguration;
 import hm.binkley.man.audit.AxonExecution;
 import hm.binkley.man.command.StartApplicationCommand;
 import hm.binkley.man.event.ApplicationStartedEvent;
