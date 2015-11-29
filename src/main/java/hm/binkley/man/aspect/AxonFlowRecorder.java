@@ -16,7 +16,9 @@ import javax.inject.Inject;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static hm.binkley.man.audit.HandlerExecutionRecord.ExecutionAction.dispatchCommandMessage;
 import static hm.binkley.man.audit.HandlerExecutionRecord.ExecutionAction.handleCommand;
+import static hm.binkley.man.audit.HandlerExecutionRecord.ExecutionAction.handleCommandMessage;
 import static hm.binkley.man.audit.HandlerExecutionRecord.ExecutionAction.handleEvent;
 import static hm.binkley.man.audit.HandlerExecutionRecord.ExecutionAction.handleEventMessage;
 import static hm.binkley.man.audit.HandlerExecutionRecord.failure;
@@ -31,6 +33,15 @@ public class AxonFlowRecorder {
     private final Consumer<? super HandlerExecutionRecord> consumer;
 
     @Pointcut(
+            "execution(void org.axonframework.commandhandling.CommandBus.dispatch(..))")
+    public void handleDispatchCommandMessage() {}
+
+    @Pointcut(
+            "execution(* org.axonframework.commandhandling.CommandHandler.handle(..))")
+    public void handleCommandMessage() {}
+
+    /** @todo Does not match on ctor with Spring AOP */
+    @Pointcut(
             "@annotation(org.axonframework.commandhandling.annotation.CommandHandler)")
     public void handleCommand() {}
 
@@ -42,9 +53,24 @@ public class AxonFlowRecorder {
             "@annotation(org.axonframework.eventhandling.annotation.EventHandler)")
     public void handleEvent() {}
 
+    /** @todo Re-enable when dispatched command has an ID */
+    // @Around("handleDispatchCommandMessage()")
+    public Object logDispatchCommandMessage(final ProceedingJoinPoint pjp)
+            throws Throwable {
+        final Message message = (Message) pjp.getArgs()[0];
+        return proceedWithRecording(dispatchCommandMessage, pjp, message);
+    }
+
+    @Around("handleCommandMessage()")
+    public Object logHandleCommandMessage(final ProceedingJoinPoint pjp)
+            throws Throwable {
+        final Message message = (Message) pjp.getArgs()[0];
+        return proceedWithRecording(handleCommandMessage, pjp, message);
+    }
+
     /** @todo Never actually called, so handler sigature is lost */
     @Around("handleCommand()")
-    public Object logCommand(final ProceedingJoinPoint pjp)
+    public Object logHandleCommand(final ProceedingJoinPoint pjp)
             throws Throwable {
         final Object command = pjp.getArgs()[0];
         final Optional<CommandMessage> message = findMessage(

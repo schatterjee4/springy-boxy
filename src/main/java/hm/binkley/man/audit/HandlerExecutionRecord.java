@@ -13,7 +13,6 @@ import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
-import static hm.binkley.man.audit.HandlerExecutionRecord.ExecutionAction.handleCommand;
 import static lombok.AccessLevel.PRIVATE;
 import static org.axonframework.auditing.CorrelationAuditDataProvider.DEFAULT_CORRELATION_KEY;
 
@@ -52,7 +51,14 @@ public final class HandlerExecutionRecord {
     }
 
     public boolean isCommand() {
-        return handleCommand == action;
+        switch (action) {
+        case dispatchCommandMessage:
+        case handleCommandMessage:
+        case handleCommand:
+            return true;
+        default:
+            return false;
+        }
     }
 
     public boolean isEvent() {
@@ -76,12 +82,8 @@ public final class HandlerExecutionRecord {
 
     @SuppressWarnings("unchecked")
     public <C> Optional<CommandMessage<C>> asCommandMessage() {
-        switch (action) {
-        case handleCommand:
-            return Optional.of((CommandMessage<C>) message);
-        default: // Oh for proper case statements
-            return Optional.empty();
-        }
+        return Optional
+                .ofNullable(isCommand() ? (CommandMessage<C>) message : null);
     }
 
     public <C> Optional<C> asCommand() {
@@ -91,13 +93,8 @@ public final class HandlerExecutionRecord {
 
     @SuppressWarnings("unchecked")
     public <E> Optional<EventMessage<E>> asEventMessage() {
-        switch (action) {
-        case handleEventMessage:
-        case handleEvent:
-            return Optional.of((EventMessage<E>) message);
-        default: // Oh for proper case statements
-            return Optional.empty();
-        }
+        return Optional
+                .ofNullable(isEvent() ? (EventMessage<E>) message : null);
     }
 
     public <C> Optional<C> asEvent() {
@@ -114,6 +111,8 @@ public final class HandlerExecutionRecord {
     }
 
     public enum ExecutionAction {
+        dispatchCommandMessage,
+        handleCommandMessage,
         handleCommand,
         handleEventMessage,
         handleEvent
