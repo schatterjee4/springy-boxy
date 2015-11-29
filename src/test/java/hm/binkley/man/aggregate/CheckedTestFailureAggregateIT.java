@@ -6,7 +6,9 @@ import hm.binkley.man.audit.AuditRecord;
 import hm.binkley.man.audit.AxonExecution;
 import hm.binkley.man.command.CheckedTestFailureCommand;
 import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.SystemOutRule;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -26,6 +28,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ContextConfiguration(classes = {Main.class, TestConfiguration.class})
 @DirtiesContext
 public class CheckedTestFailureAggregateIT {
+    @Rule
+    public final SystemOutRule sout = new SystemOutRule().
+            enableLog().
+            mute();
+
     @Inject
     private CommandGateway commandGateway;
     @Inject
