@@ -2,7 +2,6 @@ package hm.binkley.man;
 
 import hm.binkley.man.aggregate.Application;
 import hm.binkley.man.audit.AuditRecord;
-import hm.binkley.man.audit.RecordingAuditLogger;
 import org.axonframework.auditing.AuditDataProvider;
 import org.axonframework.auditing.AuditLogger;
 import org.axonframework.auditing.AuditingInterceptor;
@@ -30,8 +29,7 @@ import java.io.IOException;
 import java.util.function.Consumer;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonMap;
-import static java.util.UUID.randomUUID;
+import static java.util.Collections.singletonList;
 import static org.axonframework.commandhandling.annotation.AggregateAnnotationCommandHandler.subscribe;
 
 @Configuration
@@ -42,6 +40,8 @@ public class ApplicationConfiguration {
     public CommandBus commandBus(
             final AuditingInterceptor auditingInterceptor) {
         final SimpleCommandBus commandBus = new SimpleCommandBus();
+        commandBus.setDispatchInterceptors(
+                singletonList(new BeanValidationInterceptor()));
         commandBus.setHandlerInterceptors(
                 asList(new BeanValidationInterceptor(), auditingInterceptor));
         return commandBus;
@@ -77,11 +77,6 @@ public class ApplicationConfiguration {
         final CommandGatewayFactoryBean gatewayFactory
                 = new CommandGatewayFactoryBean();
         gatewayFactory.setCommandBus(commandBus);
-        gatewayFactory.setCommandDispatchInterceptors(
-                new BeanValidationInterceptor(),
-                commandMessage -> commandMessage.withMetaData(
-                        singletonMap("correlation-identifier",
-                                randomUUID())));
         return gatewayFactory;
     }
 

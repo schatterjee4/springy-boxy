@@ -12,6 +12,7 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 
 import static lombok.AccessLevel.PRIVATE;
+import static org.axonframework.auditing.CorrelationAuditDataProvider.DEFAULT_CORRELATION_KEY;
 
 /**
  * {@code AxonExecution} <b>needs documentation</b>.
@@ -29,7 +30,11 @@ public final class AxonExecution {
     @Nonnull
     public final Message message;
     @Nullable
-    public final Throwable failure;
+    public final Throwable failureCause;
+
+    public String getCommandIdentifier() {
+        return (String) message.getMetaData().get(DEFAULT_CORRELATION_KEY);
+    }
 
     public static AxonExecution success(final ExecutionAction action,
             final Message thing, final JoinPoint handler) {
