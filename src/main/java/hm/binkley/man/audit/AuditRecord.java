@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.axonframework.commandhandling.CommandMessage;
+import org.axonframework.common.annotation.MessageHandlerInvocationException;
 import org.axonframework.domain.EventMessage;
 
 import javax.annotation.Nonnull;
@@ -38,7 +39,11 @@ public final class AuditRecord {
 
     public static AuditRecord recordFailure(final CommandMessage command,
             final Throwable failureCause, final List<EventMessage> events) {
-        return new AuditRecord(command, null, failureCause, events);
+        if (failureCause instanceof MessageHandlerInvocationException)
+            return new AuditRecord(command, null,
+                    failureCause.getCause().getCause(), events);
+        else
+            return new AuditRecord(command, null, failureCause, events);
     }
 
     public String getCommandIdentifier() {

@@ -4,6 +4,7 @@ import hm.binkley.Main;
 import hm.binkley.man.TestConfiguration;
 import hm.binkley.man.audit.AuditRecord;
 import hm.binkley.man.audit.HandlerExecutionRecord;
+import hm.binkley.man.audit.TrackingUnitOfWorkListener.UnitOfWorkRecord;
 import hm.binkley.man.command.CheckedTestFailureCommand;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.junit.Rule;
@@ -16,6 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -36,28 +38,40 @@ public class CheckedTestFailureAggregateIT {
     @Inject
     private CommandGateway commandGateway;
     @Inject
-    private ArrayList<HandlerExecutionRecord> executions;
+    private ArrayList<HandlerExecutionRecord> executionRecords;
     @Inject
-    private ArrayList<AuditRecord> records;
+    private ArrayList<AuditRecord> auditRecords;
+    @Inject
+    private ArrayList<UnitOfWorkRecord> unitOfWorkRecords;
 
     @Test
     public void shouldTrackCheckedFailedFlow() {
         commandGateway.send(new CheckedTestFailureCommand(randomUUID()));
 
-        assertThat(executions).isNotEmpty();
-        assertThat(records).isNotEmpty();
+        assertThat(executionRecords).isNotEmpty();
+        assertThat(auditRecords).isNotEmpty();
+        assertThat(unitOfWorkRecords).isNotEmpty();
         final Set<Object> cids = concat(executions(), records()).
                 collect(toSet());
         assertThat(cids).hasSize(1);
+
+        assertThat(lastOf(executionRecords).failureCause).
+                isSameAs(lastOf(auditRecords).failureCause);
+        assertThat(lastOf(executionRecords).failureCause).
+                isSameAs(lastOf(unitOfWorkRecords).failureCause);
     }
 
     private Stream<String> executions() {
-        return executions.stream().
+        return executionRecords.stream().
                 map(HandlerExecutionRecord::getCommandIdentifier);
     }
 
     private Stream<String> records() {
-        return records.stream().
+        return auditRecords.stream().
                 map(AuditRecord::getCommandIdentifier);
+    }
+
+    private static <T> T lastOf(final List<T> list) {
+        return list.get(list.size() - 1);
     }
 }

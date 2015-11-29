@@ -4,6 +4,7 @@ import hm.binkley.Main;
 import hm.binkley.man.TestConfiguration;
 import hm.binkley.man.audit.AuditRecord;
 import hm.binkley.man.audit.HandlerExecutionRecord;
+import hm.binkley.man.audit.TrackingUnitOfWorkListener.UnitOfWorkRecord;
 import hm.binkley.man.command.TestSuccessCommand;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.junit.Test;
@@ -29,28 +30,31 @@ public class TestSuccessAggregateIT {
     @Inject
     private CommandGateway commandGateway;
     @Inject
-    private ArrayList<HandlerExecutionRecord> executions;
+    private ArrayList<HandlerExecutionRecord> executionRecords;
     @Inject
-    private ArrayList<AuditRecord> records;
+    private ArrayList<AuditRecord> auditRecords;
+    @Inject
+    private ArrayList<UnitOfWorkRecord> unitOfWorkRecords;
 
     @Test
     public void shouldTrackSuccessfulFlow() {
         commandGateway.send(new TestSuccessCommand(randomUUID()));
 
-        assertThat(executions).isNotEmpty();
-        assertThat(records).isNotEmpty();
+        assertThat(executionRecords).isNotEmpty();
+        assertThat(auditRecords).isNotEmpty();
+        assertThat(unitOfWorkRecords).isNotEmpty();
         final Set<Object> cids = concat(executions(), records()).
                 collect(toSet());
         assertThat(cids).hasSize(1);
     }
 
     private Stream<String> executions() {
-        return executions.stream().
+        return executionRecords.stream().
                 map(HandlerExecutionRecord::getCommandIdentifier);
     }
 
     private Stream<String> records() {
-        return records.stream().
+        return auditRecords.stream().
                 map(AuditRecord::getCommandIdentifier);
     }
 }

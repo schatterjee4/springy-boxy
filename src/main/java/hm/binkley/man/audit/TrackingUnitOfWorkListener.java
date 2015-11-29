@@ -3,6 +3,7 @@ package hm.binkley.man.audit;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import org.axonframework.common.annotation.MessageHandlerInvocationException;
 import org.axonframework.domain.AggregateRoot;
 import org.axonframework.domain.EventMessage;
 import org.axonframework.unitofwork.UnitOfWork;
@@ -49,8 +50,12 @@ public final class TrackingUnitOfWorkListener
         }
 
         UnitOfWorkRecord failure(final Throwable failureCause) {
-            return new UnitOfWorkRecord(aggregateRoots, eventMessages,
-                    failureCause);
+            if (failureCause instanceof MessageHandlerInvocationException)
+                return new UnitOfWorkRecord(aggregateRoots, eventMessages,
+                        failureCause.getCause().getCause());
+            else
+                return new UnitOfWorkRecord(aggregateRoots, eventMessages,
+                        failureCause);
         }
     }
 

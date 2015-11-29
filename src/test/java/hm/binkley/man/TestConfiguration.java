@@ -36,12 +36,17 @@ public class TestConfiguration {
             = new ArrayList<>();
 
     @Bean
-    public ArrayList<HandlerExecutionRecord> axonExecutions() {
+    public ArrayList<HandlerExecutionRecord> executionRecords() {
         return handlerExecutionRecords;
     }
 
     @Bean
     public ArrayList<AuditRecord> auditRecords() { return auditRecords; }
+
+    @Bean
+    public ArrayList<UnitOfWorkRecord> unitOfWorkRecords() {
+        return unitOfWorkRecords;
+    }
 
     @Bean
     @Primary
