@@ -5,7 +5,7 @@ import hm.binkley.man.aggregate.TestSuccessAggregate;
 import hm.binkley.man.aggregate.UncheckedTestFailureAggregate;
 import hm.binkley.man.audit.AuditRecord;
 import hm.binkley.man.audit.HandlerExecutionRecord;
-import hm.binkley.man.audit.TrackingUnitOfWorkListener.UnitOfWorkRecord;
+import hm.binkley.man.audit.UnitOfWorkRecord;
 import org.axonframework.commandhandling.CommandBus;
 import org.axonframework.eventhandling.EventBus;
 import org.axonframework.eventsourcing.EventSourcingRepository;

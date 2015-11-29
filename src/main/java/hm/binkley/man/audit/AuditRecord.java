@@ -9,6 +9,7 @@ import org.axonframework.domain.EventMessage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import static lombok.AccessLevel.PRIVATE;
@@ -39,14 +40,18 @@ public final class AuditRecord {
 
     public static AuditRecord recordFailure(final CommandMessage command,
             final Throwable failureCause, final List<EventMessage> events) {
-        if (failureCause instanceof MessageHandlerInvocationException)
-            return new AuditRecord(command, null,
-                    failureCause.getCause().getCause(), events);
-        else
-            return new AuditRecord(command, null, failureCause, events);
+        return new AuditRecord(command, null, unwrap(failureCause), events);
     }
 
     public String getCommandIdentifier() {
         return command.getIdentifier();
+    }
+
+    private static Throwable unwrap(Throwable failureCause) {
+        if (failureCause instanceof MessageHandlerInvocationException)
+            failureCause = failureCause.getCause();
+        if (failureCause instanceof InvocationTargetException)
+            failureCause = failureCause.getCause();
+        return failureCause;
     }
 }

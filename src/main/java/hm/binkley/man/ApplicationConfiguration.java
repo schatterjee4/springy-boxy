@@ -3,7 +3,7 @@ package hm.binkley.man;
 import hm.binkley.man.aggregate.Application;
 import hm.binkley.man.audit.AuditRecord;
 import hm.binkley.man.audit.TrackingUnitOfWorkListener;
-import hm.binkley.man.audit.TrackingUnitOfWorkListener.UnitOfWorkRecord;
+import hm.binkley.man.audit.UnitOfWorkRecord;
 import org.axonframework.auditing.AuditDataProvider;
 import org.axonframework.auditing.AuditLogger;
 import org.axonframework.auditing.AuditingInterceptor;

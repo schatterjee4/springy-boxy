@@ -4,7 +4,7 @@ import hm.binkley.Main;
 import hm.binkley.man.TestConfiguration;
 import hm.binkley.man.audit.AuditRecord;
 import hm.binkley.man.audit.HandlerExecutionRecord;
-import hm.binkley.man.audit.TrackingUnitOfWorkListener.UnitOfWorkRecord;
+import hm.binkley.man.audit.UnitOfWorkRecord;
 import hm.binkley.man.command.TestSuccessCommand;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.junit.Test;

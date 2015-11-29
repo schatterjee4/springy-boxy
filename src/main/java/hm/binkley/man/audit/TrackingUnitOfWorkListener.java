@@ -1,9 +1,7 @@
 package hm.binkley.man.audit;
 
-import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import org.axonframework.common.annotation.MessageHandlerInvocationException;
 import org.axonframework.domain.AggregateRoot;
 import org.axonframework.domain.EventMessage;
 import org.axonframework.unitofwork.UnitOfWork;
@@ -11,14 +9,11 @@ import org.axonframework.unitofwork.UnitOfWorkListenerAdapter;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import static hm.binkley.man.audit.TrackingUnitOfWorkListener.UnitOfWorkRecord.success;
-import static lombok.AccessLevel.PRIVATE;
+import static hm.binkley.man.audit.UnitOfWorkRecord.success;
 
 /**
  * {@code TrackingUnitOfWorkListener} <b>needs documentation</b>.
@@ -35,29 +30,6 @@ public final class TrackingUnitOfWorkListener
 
     @Nonnull
     private final Consumer<? super UnitOfWorkRecord> records;
-
-    @EqualsAndHashCode
-    @RequiredArgsConstructor(access = PRIVATE)
-    @ToString
-    public static final class UnitOfWorkRecord {
-        public final Set<AggregateRoot> aggregateRoots;
-        public final List<EventMessage> eventMessages;
-        public final Throwable failureCause;
-
-        static UnitOfWorkRecord success() {
-            return new UnitOfWorkRecord(new HashSet<>(), new ArrayList<>(),
-                    null);
-        }
-
-        UnitOfWorkRecord failure(final Throwable failureCause) {
-            if (failureCause instanceof MessageHandlerInvocationException)
-                return new UnitOfWorkRecord(aggregateRoots, eventMessages,
-                        failureCause.getCause().getCause());
-            else
-                return new UnitOfWorkRecord(aggregateRoots, eventMessages,
-                        failureCause);
-        }
-    }
 
     @Override
     public void afterCommit(final UnitOfWork unitOfWork) {

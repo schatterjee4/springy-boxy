@@ -4,11 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.aspectj.lang.JoinPoint;
 import org.axonframework.commandhandling.CommandMessage;
+import org.axonframework.common.annotation.MessageHandlerInvocationException;
 import org.axonframework.domain.EventMessage;
 import org.axonframework.domain.Message;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
 import static hm.binkley.man.audit.HandlerExecutionRecord.ExecutionAction.handleCommand;
@@ -33,10 +35,6 @@ public final class HandlerExecutionRecord {
     @Nullable
     public final Throwable failureCause;
 
-    public String getCommandIdentifier() {
-        return (String) message.getMetaData().get(DEFAULT_CORRELATION_KEY);
-    }
-
     public static HandlerExecutionRecord success(final ExecutionAction action,
             final Message thing, final JoinPoint handler) {
         return new HandlerExecutionRecord(action, handler, thing, null);
@@ -44,8 +42,13 @@ public final class HandlerExecutionRecord {
 
     public static HandlerExecutionRecord failure(final ExecutionAction action,
             final Message thing, final JoinPoint handler,
-            final Throwable failure) {
-        return new HandlerExecutionRecord(action, handler, thing, failure);
+            final Throwable failureCause) {
+        return new HandlerExecutionRecord(action, handler, thing,
+                unwrap(failureCause));
+    }
+
+    public String getCommandIdentifier() {
+        return (String) message.getMetaData().get(DEFAULT_CORRELATION_KEY);
     }
 
     public boolean isCommand() {
@@ -100,6 +103,14 @@ public final class HandlerExecutionRecord {
     public <C> Optional<C> asEvent() {
         return this.<C>asEventMessage().
                 map(Message::getPayload);
+    }
+
+    private static Throwable unwrap(Throwable failureCause) {
+        if (failureCause instanceof MessageHandlerInvocationException)
+            failureCause = failureCause.getCause();
+        if (failureCause instanceof InvocationTargetException)
+            failureCause = failureCause.getCause();
+        return failureCause;
     }
 
     public enum ExecutionAction {
