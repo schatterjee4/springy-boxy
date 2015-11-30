@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static java.lang.System.out;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.Stream.concat;
@@ -45,6 +46,10 @@ public class ApplicationIT {
         commandGateway.send(EndApplicationCommand.builder().
                 id(randomUUID()).
                 build());
+
+        unitOfWorkRecords.forEach(out::println);
+        auditRecords.forEach(out::println);
+        executionRecords.forEach(out::println);
 
         assertThat(executionRecords).isNotEmpty();
         assertThat(auditRecords).isNotEmpty();

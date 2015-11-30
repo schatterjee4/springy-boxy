@@ -22,7 +22,7 @@ import static hm.binkley.man.audit.AuditRecord.recordSuccess;
  */
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
-public class RecordingAuditLogger
+public class TrackingAuditLogger
         implements AuditLogger {
     @Nonnull
     private final Consumer<? super AuditRecord> records;
