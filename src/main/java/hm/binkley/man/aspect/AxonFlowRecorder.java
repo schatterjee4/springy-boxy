@@ -1,7 +1,7 @@
 package hm.binkley.man.aspect;
 
-import hm.binkley.man.audit.HandlerExecutionRecord;
-import hm.binkley.man.audit.HandlerExecutionRecord.ExecutionAction;
+import hm.binkley.man.audit.ExecutionRecord;
+import hm.binkley.man.audit.ExecutionRecord.ExecutionAction;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -16,13 +16,13 @@ import javax.inject.Inject;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import static hm.binkley.man.audit.HandlerExecutionRecord.ExecutionAction.dispatchCommandMessage;
-import static hm.binkley.man.audit.HandlerExecutionRecord.ExecutionAction.handleCommand;
-import static hm.binkley.man.audit.HandlerExecutionRecord.ExecutionAction.handleCommandMessage;
-import static hm.binkley.man.audit.HandlerExecutionRecord.ExecutionAction.handleEvent;
-import static hm.binkley.man.audit.HandlerExecutionRecord.ExecutionAction.handleEventMessage;
-import static hm.binkley.man.audit.HandlerExecutionRecord.failure;
-import static hm.binkley.man.audit.HandlerExecutionRecord.success;
+import static hm.binkley.man.audit.ExecutionRecord.ExecutionAction.dispatchCommandMessage;
+import static hm.binkley.man.audit.ExecutionRecord.ExecutionAction.handleCommand;
+import static hm.binkley.man.audit.ExecutionRecord.ExecutionAction.handleCommandMessage;
+import static hm.binkley.man.audit.ExecutionRecord.ExecutionAction.handleEvent;
+import static hm.binkley.man.audit.ExecutionRecord.ExecutionAction.handleEventMessage;
+import static hm.binkley.man.audit.ExecutionRecord.failure;
+import static hm.binkley.man.audit.ExecutionRecord.success;
 import static org.axonframework.commandhandling.GenericCommandMessage.asCommandMessage;
 import static org.axonframework.domain.GenericEventMessage.asEventMessage;
 
@@ -30,7 +30,7 @@ import static org.axonframework.domain.GenericEventMessage.asEventMessage;
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class AxonFlowRecorder {
-    private final Consumer<? super HandlerExecutionRecord> consumer;
+    private final Consumer<? super ExecutionRecord> consumer;
 
     @Pointcut(
             "execution(void org.axonframework.commandhandling.CommandBus.dispatch(..))")

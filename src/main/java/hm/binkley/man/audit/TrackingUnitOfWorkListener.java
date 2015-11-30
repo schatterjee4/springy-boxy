@@ -19,7 +19,7 @@ import static hm.binkley.man.audit.UnitOfWorkRecord.success;
  * {@code TrackingUnitOfWorkListener} <b>needs documentation</b>.
  *
  * @author <a href="mailto:binkley@alumni.rice.edu">B. K. Oxley (binkley)</a>
- * @todo Needs documentation.
+ * @todo onPrepareCommit() may not be called if rollback() called directly?
  */
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 @ToString

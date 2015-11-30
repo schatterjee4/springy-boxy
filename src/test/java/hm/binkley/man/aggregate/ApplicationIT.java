@@ -1,10 +1,12 @@
 package hm.binkley.man.aggregate;
 
 import hm.binkley.Main;
-import hm.binkley.man.audit.AuditRecord;
-import hm.binkley.man.audit.HandlerExecutionRecord;
-import hm.binkley.man.command.StartApplicationCommand;
 import hm.binkley.man.TestConfiguration;
+import hm.binkley.man.audit.AuditRecord;
+import hm.binkley.man.audit.ExecutionRecord;
+import hm.binkley.man.audit.UnitOfWorkRecord;
+import hm.binkley.man.command.EndApplicationCommand;
+import hm.binkley.man.command.StartApplicationCommand;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,30 +31,36 @@ public class ApplicationIT {
     @Inject
     private CommandGateway commandGateway;
     @Inject
-    private ArrayList<HandlerExecutionRecord> executions;
+    private ArrayList<ExecutionRecord> executionRecords;
     @Inject
-    private ArrayList<AuditRecord> records;
+    private ArrayList<AuditRecord> auditRecords;
+    @Inject
+    private ArrayList<UnitOfWorkRecord> unitOfWorkRecords;
 
     @Test
     public void shouldTrackFlow() {
         commandGateway.send(StartApplicationCommand.builder().
                 id(randomUUID()).
                 build());
+        commandGateway.send(EndApplicationCommand.builder().
+                id(randomUUID()).
+                build());
 
-        assertThat(executions).isNotEmpty();
-        assertThat(records).isNotEmpty();
+        assertThat(executionRecords).isNotEmpty();
+        assertThat(auditRecords).isNotEmpty();
+        assertThat(unitOfWorkRecords).isNotEmpty();
         final Set<Object> cids = concat(executions(), records()).
                 collect(toSet());
-        assertThat(cids).hasSize(1);
+        assertThat(cids).hasSize(2);
     }
 
     private Stream<String> executions() {
-        return executions.stream().
-                map(HandlerExecutionRecord::getCommandIdentifier);
+        return executionRecords.stream().
+                map(ExecutionRecord::getCommandIdentifier);
     }
 
     private Stream<String> records() {
-        return records.stream().
+        return auditRecords.stream().
                 map(AuditRecord::getCommandIdentifier);
     }
 }

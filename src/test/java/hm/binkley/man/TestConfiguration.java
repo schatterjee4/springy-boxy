@@ -4,7 +4,7 @@ import hm.binkley.man.aggregate.CheckedTestFailureAggregate;
 import hm.binkley.man.aggregate.TestSuccessAggregate;
 import hm.binkley.man.aggregate.UncheckedTestFailureAggregate;
 import hm.binkley.man.audit.AuditRecord;
-import hm.binkley.man.audit.HandlerExecutionRecord;
+import hm.binkley.man.audit.ExecutionRecord;
 import hm.binkley.man.audit.UnitOfWorkRecord;
 import org.axonframework.commandhandling.CommandBus;
 import org.axonframework.eventhandling.EventBus;
@@ -29,14 +29,14 @@ import static org.axonframework.commandhandling.annotation.AggregateAnnotationCo
  */
 @Configuration
 public class TestConfiguration {
-    private final ArrayList<HandlerExecutionRecord> handlerExecutionRecords
+    private final ArrayList<ExecutionRecord> handlerExecutionRecords
             = new ArrayList<>();
     private final ArrayList<AuditRecord> auditRecords = new ArrayList<>();
     private final ArrayList<UnitOfWorkRecord> unitOfWorkRecords
             = new ArrayList<>();
 
     @Bean
-    public ArrayList<HandlerExecutionRecord> executionRecords() {
+    public ArrayList<ExecutionRecord> executionRecords() {
         return handlerExecutionRecords;
     }
 
@@ -50,7 +50,7 @@ public class TestConfiguration {
 
     @Bean
     @Primary
-    public Consumer<? super HandlerExecutionRecord> axonExecutionConsumer() {
+    public Consumer<? super ExecutionRecord> axonExecutionConsumer() {
         return handlerExecutionRecords::add;
     }
 

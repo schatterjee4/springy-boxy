@@ -24,7 +24,7 @@ import static org.axonframework.auditing.CorrelationAuditDataProvider.DEFAULT_CO
  */
 @RequiredArgsConstructor(access = PRIVATE)
 @ToString
-public final class HandlerExecutionRecord {
+public final class ExecutionRecord {
     @Nonnull
     public final ExecutionAction action;
     @Nonnull
@@ -34,15 +34,15 @@ public final class HandlerExecutionRecord {
     @Nullable
     public final Throwable failureCause;
 
-    public static HandlerExecutionRecord success(final ExecutionAction action,
+    public static ExecutionRecord success(final ExecutionAction action,
             final Message thing, final JoinPoint handler) {
-        return new HandlerExecutionRecord(action, handler, thing, null);
+        return new ExecutionRecord(action, handler, thing, null);
     }
 
-    public static HandlerExecutionRecord failure(final ExecutionAction action,
+    public static ExecutionRecord failure(final ExecutionAction action,
             final Message thing, final JoinPoint handler,
             final Throwable failureCause) {
-        return new HandlerExecutionRecord(action, handler, thing,
+        return new ExecutionRecord(action, handler, thing,
                 unwrap(failureCause));
     }
 

@@ -1,6 +1,6 @@
 package hm.binkley;
 
-import hm.binkley.man.audit.HandlerExecutionRecord;
+import hm.binkley.man.audit.ExecutionRecord;
 import org.slf4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,7 +23,7 @@ public class Main {
     }
 
     @Bean
-    public Consumer<? super HandlerExecutionRecord> axonExecutionConsumer() {
+    public Consumer<? super ExecutionRecord> axonExecutionConsumer() {
         return execution -> logger.debug(execution.toString());
     }
 }
