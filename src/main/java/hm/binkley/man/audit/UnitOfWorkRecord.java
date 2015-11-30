@@ -6,14 +6,17 @@ import lombok.ToString;
 import org.axonframework.common.annotation.MessageHandlerInvocationException;
 import org.axonframework.domain.AggregateRoot;
 import org.axonframework.domain.EventMessage;
+import org.axonframework.domain.Message;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static lombok.AccessLevel.PRIVATE;
+import static org.axonframework.auditing.CorrelationAuditDataProvider.DEFAULT_CORRELATION_KEY;
 
 /**
  * {@code UnitOfWorkRecord} <strong>needs documentation</strong>.
@@ -36,6 +39,15 @@ public final class UnitOfWorkRecord {
     UnitOfWorkRecord failure(final Throwable failureCause) {
         return new UnitOfWorkRecord(aggregateRoots, eventMessages,
                 unwrap(failureCause));
+    }
+
+    public Stream<String> getCommandIdentifiers() {
+        return eventMessages.stream().
+                map(UnitOfWorkRecord::getCommandIdentifier);
+    }
+
+    private static String getCommandIdentifier(final Message message) {
+        return (String) message.getMetaData().get(DEFAULT_CORRELATION_KEY);
     }
 
     private static Throwable unwrap(Throwable failureCause) {

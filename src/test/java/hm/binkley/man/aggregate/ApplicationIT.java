@@ -54,7 +54,8 @@ public class ApplicationIT {
         assertThat(executionRecords).isNotEmpty();
         assertThat(auditRecords).isNotEmpty();
         assertThat(unitOfWorkRecords).isNotEmpty();
-        final Set<Object> cids = concat(executions(), records()).
+        final Set<Object> cids = concat(concat(executions(), records()),
+                workUnits()).
                 collect(toSet());
         assertThat(cids).hasSize(2);
     }
@@ -67,5 +68,10 @@ public class ApplicationIT {
     private Stream<String> records() {
         return auditRecords.stream().
                 map(AuditRecord::getCommandIdentifier);
+    }
+
+    private Stream<String> workUnits() {
+        return unitOfWorkRecords.stream().
+                flatMap(UnitOfWorkRecord::getCommandIdentifiers);
     }
 }

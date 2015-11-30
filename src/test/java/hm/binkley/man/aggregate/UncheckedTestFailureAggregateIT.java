@@ -51,7 +51,8 @@ public class UncheckedTestFailureAggregateIT {
         assertThat(executionRecords).isNotEmpty();
         assertThat(auditRecords).isNotEmpty();
         assertThat(unitOfWorkRecords).isNotEmpty();
-        final Set<Object> cids = concat(executions(), records()).
+        final Set<Object> cids = concat(concat(executions(), records()),
+                workUnits()).
                 collect(toSet());
         assertThat(cids).hasSize(1);
 
@@ -69,6 +70,11 @@ public class UncheckedTestFailureAggregateIT {
     private Stream<String> records() {
         return auditRecords.stream().
                 map(AuditRecord::getCommandIdentifier);
+    }
+
+    private Stream<String> workUnits() {
+        return unitOfWorkRecords.stream().
+                flatMap(UnitOfWorkRecord::getCommandIdentifiers);
     }
 
     private static <T> T lastOf(final List<T> list) {
