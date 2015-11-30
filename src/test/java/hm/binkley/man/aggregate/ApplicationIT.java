@@ -19,12 +19,12 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static java.lang.System.out;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.Stream.concat;
 import static org.assertj.core.api.Assertions.assertThat;
 
+/** @todo Broken!  Passes, but for wrong reason - see stack trace */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {Main.class, TestConfiguration.class})
 @DirtiesContext
@@ -46,10 +46,6 @@ public class ApplicationIT {
         commandGateway.send(EndApplicationCommand.builder().
                 id(randomUUID()).
                 build());
-
-        unitOfWorkRecords.forEach(out::println);
-        auditRecords.forEach(out::println);
-        executionRecords.forEach(out::println);
 
         assertThat(executionRecords).isNotEmpty();
         assertThat(auditRecords).isNotEmpty();
