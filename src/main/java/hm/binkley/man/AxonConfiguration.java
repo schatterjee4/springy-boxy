@@ -7,6 +7,7 @@ import hm.binkley.man.audit.UnitOfWorkRecord;
 import org.axonframework.auditing.AuditDataProvider;
 import org.axonframework.auditing.AuditLogger;
 import org.axonframework.auditing.AuditingInterceptor;
+import org.axonframework.auditing.CommandMetaDataProvider;
 import org.axonframework.auditing.CorrelationAuditDataProvider;
 import org.axonframework.commandhandling.CommandBus;
 import org.axonframework.commandhandling.SimpleCommandBus;
@@ -66,7 +67,22 @@ public class AxonConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public AuditDataProvider auditDataProvider() {
+    public AuditDataProvider auditDataProvider(
+            final CommandMetaDataProvider commandMetaDataProvider,
+            final CorrelationAuditDataProvider correlationAuditDataProvider) {
+        return new CombiningAuditDataProvider(commandMetaDataProvider,
+                correlationAuditDataProvider);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public CommandMetaDataProvider commandMetaDataProvider() {
+        return new CommandMetaDataProvider();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public CorrelationAuditDataProvider correlationAuditDataProvider() {
         return new CorrelationAuditDataProvider();
     }
 
