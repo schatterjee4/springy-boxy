@@ -23,7 +23,7 @@ import static org.axonframework.commandhandling.annotation.AggregateAnnotationCo
 /**
  * {@code TestConfiguration} <strong>needs documentation</strong>.
  *
- * @author <a href="mailto:boxley@thoughtworks.com">Brian Oxley</a>
+ * @author <a href="mailto:binkley@alumni.rice.edu">B. K. Oxley (binkley)</a>
  * @todo Needs documentation
  * @todo Nasty ArrayList because of Spring over-cleverness
  */

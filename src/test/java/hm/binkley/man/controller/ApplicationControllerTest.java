@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 /**
  * {@code ApplicationControllerTest} <strong>needs documentation</strong>.
  *
- * @author <a href="mailto:boxley@thoughtworks.com">Brian Oxley</a>
+ * @author <a href="mailto:binkley@alumni.rice.edu">B. K. Oxley (binkley)</a>
  * @todo Needs documentation
  */
 @RunWith(SpringJUnit4ClassRunner.class)
