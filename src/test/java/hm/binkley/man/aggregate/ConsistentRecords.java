@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static java.lang.System.out;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.Stream.concat;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author <a href="mailto:boxley@thoughtworks.com">Brian Oxley</a>
  * @todo Needs documentation
  */
+@SuppressWarnings("CollectionDeclaredAsConcreteClass")
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 @Component
 public final class ConsistentRecords {
@@ -35,10 +35,6 @@ public final class ConsistentRecords {
     private final ArrayList<UnitOfWorkRecord> unitOfWorkRecords;
 
     public void assertConsistency(final int commandCount) {
-        unitOfWorkRecords.forEach(out::println);
-        auditRecords.forEach(out::println);
-        executionRecords.forEach(out::println);
-
         assertThat(executionRecords).isNotEmpty();
         assertThat(auditRecords).isNotEmpty();
         assertThat(unitOfWorkRecords).isNotEmpty();
