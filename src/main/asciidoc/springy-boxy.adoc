@@ -83,235 +83,40 @@ include::{snippets}/error-example/http-response.adoc[]
 [[overview-hypermedia]]
 == Hypermedia
 
-RESTful Notes uses hypermedia and resources include links to other resources in their
-responses. Responses are in http://stateless.co/hal_specification.html[Hypertext Application
-from resource to resource.
-Language (HAL)] format. Links can be found beneath the `_links` key. Users of the API should
-not create URIs themselves, instead they should use the above-described links to navigate
+RESTful Notes uses hypermedia and resources include links to other resources
+in their responses. Responses are in
+http://stateless.co/hal_specification.html[Hypertext Application from resource
+to resource. Language (HAL)] format. Links can be found beneath the `_links`
+key. Users of the API should not create URIs themselves, instead they should
+use the above-described links to navigate
 
 [[resources]]
 = Resources
 
+[[resources-hello-world]]
+== Hello World
 
+[[resources-hello-world-access]]
+=== Accessing the hello world
 
-[[resources-index]]
-== Index
+A `GET` request is used to call hello world.
 
-The index provides the entry point into the service.
+[[resources-hello-world-request]]
+==== Example request
 
+include::{snippets}/hello-world/curl-request.adoc[]
 
-
-[[resources-index-access]]
-=== Accessing the index
-
-A `GET` request is used to access the index
-
-==== Response structure
-
-include::{snippets}/index-example/response-fields.adoc[]
-
+[[resources-hello-world-response]]
 ==== Example response
 
-include::{snippets}/index-example/http-response.adoc[]
+include::{snippets}/hello-world/http-response.adoc[]
 
+[[resources-hello-world-fields]]
+==== Response structure
 
+include::{snippets}/hello-world/response-fields.adoc[]
 
-[[resources-index-links]]
+[[resources-hello-world-links]]
 ==== Links
 
-include::{snippets}/index-example/links.adoc[]
-
-
-
-[[resources-notes]]
-== Notes
-
-The Notes resources is used to create and list notes
-
-
-
-[[resources-notes-list]]
-=== Listing notes
-
-A `GET` request will list all of the service's notes.
-
-==== Response structure
-
-include::{snippets}/notes-list-example/response-fields.adoc[]
-
-==== Example request
-
-include::{snippets}/notes-list-example/curl-request.adoc[]
-
-==== Example response
-
-include::{snippets}/notes-list-example/http-response.adoc[]
-
-
-
-[[resources-notes-create]]
-=== Creating a note
-
-A `POST` request is used to create a note
-
-==== Request structure
-
-include::{snippets}/notes-create-example/request-fields.adoc[]
-
-==== Example request
-
-include::{snippets}/notes-create-example/curl-request.adoc[]
-
-==== Example response
-
-include::{snippets}/notes-create-example/http-response.adoc[]
-
-
-
-[[resources-tags]]
-== Tags
-
-The Tags resource is used to create and list tags.
-
-
-
-[[resources-tags-list]]
-=== Listing tags
-
-A `GET` request will list all of the service's tags.
-
-==== Response structure
-
-include::{snippets}/tags-list-example/response-fields.adoc[]
-
-==== Example request
-
-include::{snippets}/tags-list-example/curl-request.adoc[]
-
-==== Example response
-
-include::{snippets}/tags-list-example/http-response.adoc[]
-
-
-
-[[resources-tags-create]]
-=== Creating a tag
-
-A `POST` request is used to create a note
-
-==== Request structure
-
-include::{snippets}/tags-create-example/request-fields.adoc[]
-
-==== Example request
-
-include::{snippets}/tags-create-example/curl-request.adoc[]
-
-==== Example response
-
-include::{snippets}/tags-create-example/http-response.adoc[]
-
-
-
-[[resources-note]]
-== Note
-
-The Note resource is used to retrieve, update, and delete individual notes
-
-
-
-[[resources-note-links]]
-=== Links
-
-include::{snippets}/note-get-example/links.adoc[]
-
-
-
-[[resources-note-retrieve]]
-=== Retrieve a note
-
-A `GET` request will retrieve the details of a note
-
-==== Response structure
-
-include::{snippets}/note-get-example/response-fields.adoc[]
-
-==== Example request
-
-include::{snippets}/note-get-example/curl-request.adoc[]
-
-==== Example response
-
-include::{snippets}/note-get-example/http-response.adoc[]
-
-
-
-[[resources-note-update]]
-=== Update a note
-
-A `PATCH` request is used to update a note
-
-==== Request structure
-
-include::{snippets}/note-update-example/request-fields.adoc[]
-
-To leave an attribute of a note unchanged, any of the above may be omitted from the request.
-
-==== Example request
-
-include::{snippets}/note-update-example/curl-request.adoc[]
-
-==== Example response
-
-include::{snippets}/note-update-example/http-response.adoc[]
-
-
-[[resources-tag]]
-== Tag
-
-The Tag resource is used to retrieve, update, and delete individual tags
-
-
-
-[[resources-tag-links]]
-=== Links
-
-include::{snippets}/tag-get-example/links.adoc[]
-
-
-
-[[resources-tag-retrieve]]
-=== Retrieve a tag
-
-A `GET` request will retrieve the details of a tag
-
-==== Response structure
-
-include::{snippets}/tag-get-example/response-fields.adoc[]
-
-==== Example request
-
-include::{snippets}/tag-get-example/curl-request.adoc[]
-
-==== Example response
-
-include::{snippets}/tag-get-example/http-response.adoc[]
-
-
-
-[[resources-tag-update]]
-=== Update a tag
-
-A `PATCH` request is used to update a tag
-
-==== Request structure
-
-include::{snippets}/tag-update-example/request-fields.adoc[]
-
-==== Example request
-
-include::{snippets}/tag-update-example/curl-request.adoc[]
-
-==== Example response
-
-include::{snippets}/tag-update-example/http-response.adoc[]
+include::{snippets}/hello-world/links.adoc[]
