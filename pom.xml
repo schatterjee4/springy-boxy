@@ -461,13 +461,16 @@
                             <goal>process-asciidoc</goal>
                         </goals>
                         <configuration>
-                            <backend>html</backend>
-                            <doctype>book</doctype>
                             <attributes>
+                                <project-version>${project.version}</project-version>
+                                <sectnums>true</sectnums>
                                 <snippets>
                                     ${project.build.directory}/generated-snippets
                                 </snippets>
                             </attributes>
+                            <backend>html</backend>
+                            <doctype>book</doctype>
+                            <preserveDirectories>true</preserveDirectories>
                         </configuration>
                     </execution>
                 </executions>

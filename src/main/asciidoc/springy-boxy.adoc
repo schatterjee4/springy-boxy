@@ -10,6 +10,8 @@ B. K. Oxley (binkley);
 [[overview]]
 = Overview
 
+Documentation for Springy-Boxy {project-version}.
+
 [[overview-http-verbs]]
 == HTTP verbs
 
@@ -21,15 +23,6 @@ HTTP and REST conventions in its use of HTTP verbs.
 
 | `GET`
 | Used to retrieve a resource
-
-| `POST`
-| Used to create a new resource
-
-| `PATCH`
-| Used to update an existing resource, including partial updates
-
-| `DELETE`
-| Used to delete an existing resource
 |===
 
 [[overview-http-status-codes]]
@@ -83,7 +76,7 @@ include::{snippets}/error-example/http-response.adoc[]
 [[overview-hypermedia]]
 == Hypermedia
 
-RESTful Notes uses hypermedia and resources include links to other resources
+Hello World uses hypermedia and resources include links to other resources
 in their responses. Responses are in
 http://stateless.co/hal_specification.html[Hypertext Application from resource
 to resource. Language (HAL)] format. Links can be found beneath the `_links`

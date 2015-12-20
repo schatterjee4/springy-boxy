@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -48,6 +49,6 @@ public class HelloWorldDocumentationTest {
         mockMvc.perform(get("/hello-world/Brian").
                 accept(APPLICATION_JSON)).
                 andExpect(status().isOk()).
-                andDo(document("hello-world"));
+                andDo(document("hello-world", links()));
     }
 }
