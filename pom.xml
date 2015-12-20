@@ -376,9 +376,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire.version}</version>
                 <configuration>
-                    <excludes>
-                        <exclude>**/*DocumentationTest.java</exclude>
-                    </excludes>
                     <printSummary>false</printSummary>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                 </configuration>
@@ -388,27 +385,8 @@
                 <version>${maven-surefire.version}</version>
                 <executions>
                     <execution>
-                        <id>run-integration-tests</id>
-                        <phase>integration-test</phase>
-                        <configuration>
-                            <includes>
-                                <include>**/*DocumentationTest.java</include>
-                                <include>**/*IT.java</include>
-                            </includes>
-                            <systemPropertyVariables>
-                                <restdocs.snippetDirectory>
-                                    ${project.build.outputDirectory}/generated-snippets
-                                </restdocs.snippetDirectory>
-                            </systemPropertyVariables>
-                        </configuration>
                         <goals>
                             <goal>integration-test</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>verify-integration-tests</id>
-                        <phase>verify</phase>
-                        <goals>
                             <goal>verify</goal>
                         </goals>
                     </execution>

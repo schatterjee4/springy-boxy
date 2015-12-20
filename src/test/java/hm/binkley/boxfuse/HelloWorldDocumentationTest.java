@@ -14,7 +14,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
-import static java.lang.System.getProperty;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -30,7 +29,7 @@ public class HelloWorldDocumentationTest {
     /** @todo Maven provide the name for the location. */
     @Rule
     public RestDocumentation restDocumentation = new RestDocumentation(
-            getProperty("restdocs.snippetDirectory"));
+            "target/generated-snippets");
 
     @Autowired
     private WebApplicationContext context;
