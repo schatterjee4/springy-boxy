@@ -159,6 +159,10 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-hateoas</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
         <dependency>
@@ -376,17 +380,34 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire.version}</version>
                 <configuration>
+                    <excludes>
+                        <exclude>**/*DocumentationTest.java</exclude>
+                        <exclude>**/*IT.java</exclude>
+                    </excludes>
                     <printSummary>false</printSummary>
-                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
                 </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>${maven-surefire.version}</version>
+                <configuration>
+                    <includes>
+                        <include>**/*DocumentationTest.java</include>
+                        <include>**/*IT.java</include>
+                    </includes>
+                </configuration>
                 <executions>
                     <execution>
+                        <id>run-integration-tests</id>
+                        <phase>integration-test</phase>
                         <goals>
                             <goal>integration-test</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>verify-integration-tests</id>
+                        <phase>verify</phase>
+                        <goals>
                             <goal>verify</goal>
                         </goals>
                     </execution>
@@ -455,8 +476,8 @@
                 <version>${asciidoctor-maven-plugin.version}</version>
                 <executions>
                     <execution>
-                        <id>generate-docs</id>
-                        <phase>package</phase>
+                        <id>generate-restdocs</id>
+                        <phase>verify</phase>
                         <goals>
                             <goal>process-asciidoc</goal>
                         </goals>
