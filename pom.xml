@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.3.0.RELEASE</version>
+        <version>1.3.1.RELEASE</version>
     </parent>
 
     <groupId>hm.binkley.boxfuse</groupId>
@@ -295,6 +295,7 @@
                             <goal>update-parent</goal>
                             <goal>update-child-modules</goal>
                             -->
+                            <goal>update-parent</goal>
                             <goal>update-properties</goal>
                         </goals>
                     </execution>
