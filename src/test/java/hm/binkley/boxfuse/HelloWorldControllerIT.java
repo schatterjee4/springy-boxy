@@ -1,20 +1,18 @@
 package hm.binkley.boxfuse;
 
-import com.jayway.restassured.RestAssured;
+import com.jayway.jsonpath.JsonPath;
 import hm.binkley.Main;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.web.client.RestTemplate;
 
-import static com.jayway.restassured.RestAssured.when;
 import static hm.binkley.boxfuse.HelloWorldController.PATH;
 import static java.lang.String.format;
-import static org.apache.http.HttpStatus.SC_OK;
-import static org.hamcrest.Matchers.equalTo;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(Main.class)
@@ -23,16 +21,14 @@ public class HelloWorldControllerIT {
     @Value("${local.server.port}")
     private int port;
 
-    @Before
-    public void setUp() {
-        RestAssured.port = port;
-    }
-
     @Test
     public void shouldGreet() {
-        when().get(format("%s/{name}", PATH), "Brian").
-                then().statusCode(SC_OK).
-                body("id", equalTo(1)).
-                body("content", equalTo("Hello, Brian!"));
+        final String body = new RestTemplate().getForObject(
+                format("http://localhost:%d/%s/{name}", port, PATH),
+                String.class, "Brian");
+        final int id = JsonPath.read(body, "$.id");
+        assertThat(id).isEqualTo(1);
+        final String content = JsonPath.read(body, "$.content");
+        assertThat(content).isEqualTo("Hello, Brian!");
     }
 }
