@@ -282,6 +282,7 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- TODO: Why is this downgrading?
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
@@ -291,16 +292,14 @@
                         <id>update-dependencies</id>
                         <phase>validate</phase>
                         <goals>
-                            <!-- TODO: Why is this downgrading?
-                            <goal>update-parent</goal>
                             <goal>update-child-modules</goal>
-                            -->
                             <goal>update-parent</goal>
                             <goal>update-properties</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
+            -->
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>${maven-dependency-plugin.version}</version>
@@ -476,7 +475,8 @@
                         </goals>
                         <configuration>
                             <attributes>
-                                <project-version>${project.version}</project-version>
+                                <project-version>${project.version}
+                                </project-version>
                                 <sectnums>true</sectnums>
                                 <snippets>
                                     ${project.build.directory}/generated-snippets
