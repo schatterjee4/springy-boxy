@@ -15,12 +15,21 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 public class HelloWorldController {
     public static final String PATH = "/hello-world";
 
-    private static final String template = "Hello, %s!";
+    private static final String texanTemplate = "Howdy, %s!";
+    private static final String russianTemplate = "Привет, %s!";
     private final AtomicLong counter = new AtomicLong();
 
+    @Enabled(true)
     @RequestMapping(value = "/{name}", method = GET)
-    public Greeting sayHello(@PathVariable("name") final String name) {
+    public Greeting sayHowdy(@PathVariable("name") final String name) {
         return new Greeting(counter.incrementAndGet(),
-                format(template, name));
+                format(texanTemplate, name));
+    }
+
+    @Enabled(false)
+    @RequestMapping(value = "/{name}", method = GET)
+    public Greeting sayPrivet(@PathVariable("name") final String name) {
+        return new Greeting(counter.incrementAndGet(),
+                format(russianTemplate, name));
     }
 }
