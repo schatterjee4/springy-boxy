@@ -29,6 +29,6 @@ public class HelloWorldControllerIT {
         final int id = JsonPath.read(body, "$.id");
         assertThat(id).isEqualTo(1);
         final String content = JsonPath.read(body, "$.content");
-        assertThat(content).isEqualTo("Hello, Brian!");
+        assertThat(content).isEqualTo("Howdy, Brian!");
     }
 }
