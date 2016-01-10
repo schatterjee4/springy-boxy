@@ -239,7 +239,9 @@
     </dependencies>
 
     <build>
+        <!--
         <finalName>${project.artifactId}-${project.version}-r${buildNumber}</finalName>
+        -->
         <plugins>
             <plugin>
                 <groupId>fr.jcgay.maven.plugins</groupId>
@@ -251,6 +253,7 @@
                 <artifactId>jgitflow-maven-plugin</artifactId>
                 <version>${jgitflow-maven-plugin.version}</version>
             </plugin>
+            <!--
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
@@ -283,6 +286,7 @@
                     </execution>
                 </executions>
             </plugin>
+            -->
             <plugin>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <version>${maven-enforcer-plugin.version}</version>
