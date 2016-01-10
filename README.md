@@ -2,6 +2,10 @@
 
 This software is in the Public Domain.  Please see [LICENSE.md](LICENSE.md).
 
+## Feature toggles
+
+Example of individually toggled Spring controller request handlers.
+
 ## Axon gaps
 
 * Spring AOP does not do constructors, so missing command handlers on an 
