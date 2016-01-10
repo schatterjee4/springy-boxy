@@ -14,11 +14,6 @@ public class EnabledRequestMappingHandlerMapping
     private EnabledChecker checker;
 
     @Override
-    protected void detectHandlerMethods(final Object handler) {
-        super.detectHandlerMethods(handler);
-    }
-
-    @Override
     protected RequestMappingInfo getMappingForMethod(final Method method,
             final Class<?> handlerType) {
         final Enabled enabled = findAnnotation(method, Enabled.class);
