@@ -1,6 +1,6 @@
 package hm.binkley.boxfuse;
 
-import hm.binkley.Main;
+import hm.binkley.Application;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(Main.class)
+@SpringApplicationConfiguration(Application.class)
 @WebIntegrationTest({"server.port:0", "management.port:0"})
 public class HelloWorldDocumentationTest {
     /** @todo Maven provide the name for the location. */
