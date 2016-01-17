@@ -1,18 +1,22 @@
 package hm.binkley.boxfuse;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 import javax.annotation.Nonnull;
 
+@AllArgsConstructor
 @EqualsAndHashCode
 @Getter
-@RequiredArgsConstructor
+@Setter
 @ToString
 public class Greeting {
-    private final long id;
+    private long id;
     @Nonnull
-    private final String content;
+    private String content;
+
+    public Greeting() {}
 }

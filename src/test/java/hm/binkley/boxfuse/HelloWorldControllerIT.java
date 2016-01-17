@@ -9,7 +9,6 @@ import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.RestTemplate;
 
-import static com.jayway.jsonpath.JsonPath.read;
 import static hm.binkley.boxfuse.HelloWorldController.PATH;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,12 +22,10 @@ public class HelloWorldControllerIT {
 
     @Test
     public void shouldGreet() {
-        final String body = new RestTemplate().getForObject(
+        final Greeting greeting = new RestTemplate().getForObject(
                 format("http://localhost:%d/%s/{name}", port, PATH),
-                String.class, "Brian");
-        final int id = read(body, "$.id");
-        assertThat(id).isEqualTo(1);
-        final String content = read(body, "$.content");
-        assertThat(content).isEqualTo("Howdy, Brian!");
+                Greeting.class, "Brian");
+        assertThat(greeting.getId()).isEqualTo(1);
+        assertThat(greeting.getContent()).isEqualTo("Howdy, Brian!");
     }
 }
