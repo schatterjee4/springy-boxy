@@ -330,7 +330,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- TODO: Why is this downgrading?
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
@@ -340,14 +339,14 @@
                         <id>update-dependencies</id>
                         <phase>validate</phase>
                         <goals>
-                            <goal>update-child-modules</goal>
+                            <!-- TODO: Why does this downgrade parent?
                             <goal>update-parent</goal>
+                            -->
                             <goal>update-properties</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
-            -->
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>${maven-dependency-plugin.version}</version>
@@ -376,17 +375,17 @@
                             <goal>resolve</goal>
                         </goals>
                     </execution>
-                    <!-- TODO: Until Spring boot and friends cleans this up
-                <execution>
-                    <id>analyze-or-whine</id>
-                    <phase>verify</phase>
+                    <!--
+                    <execution>
+                        <id>analyze-or-whine</id>
+                        <phase>verify</phase>
                         <configuration>
                             <failOnWarning>true</failOnWarning>
                         </configuration>
-                    <goals>
-                        <goal>analyze</goal>
-                    </goals>
-                </execution>
+                        <goals>
+                            <goal>analyze</goal>
+                        </goals>
+                    </execution>
                     -->
                 </executions>
             </plugin>
