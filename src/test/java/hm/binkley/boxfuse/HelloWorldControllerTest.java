@@ -37,6 +37,6 @@ public class HelloWorldControllerTest {
                 accept(APPLICATION_JSON_UTF8)).
                 andExpect(status().isOk()).
                 andExpect(content().
-                        json("{\"id\":1,\"content\":\"Hello, Brian!\"}"));
+                        json("{\"id\":1,\"content\":\"Hello, Brian!\",\"value\":$1.00}"));
     }
 }

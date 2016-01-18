@@ -1,6 +1,7 @@
 package hm.binkley.boxfuse;
 
 import hm.binkley.Application;
+import org.joda.money.BigMoney;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,5 +28,6 @@ public class HelloWorldControllerIT {
                 Greeting.class, "Brian");
         assertThat(greeting.getId()).isEqualTo(1);
         assertThat(greeting.getContent()).isEqualTo("Howdy, Brian!");
+        assertThat(greeting.getValue()).isEqualTo(BigMoney.parse("USD 1.00"));
     }
 }

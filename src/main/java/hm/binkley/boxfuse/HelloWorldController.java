@@ -1,5 +1,6 @@
 package hm.binkley.boxfuse;
 
+import org.joda.money.BigMoney;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,13 +24,13 @@ public class HelloWorldController {
     @RequestMapping(value = "/{name}", method = GET)
     public Greeting sayHowdy(@PathVariable("name") final String name) {
         return new Greeting(counter.incrementAndGet(),
-                format(texanTemplate, name));
+                format(texanTemplate, name), BigMoney.parse("USD 1.00"));
     }
 
     @Enabled(false)
     @RequestMapping(value = "/{name}", method = GET)
     public Greeting sayPrivet(@PathVariable("name") final String name) {
         return new Greeting(counter.incrementAndGet(),
-                format(russianTemplate, name));
+                format(russianTemplate, name), BigMoney.parse("USD 2.00"));
     }
 }
