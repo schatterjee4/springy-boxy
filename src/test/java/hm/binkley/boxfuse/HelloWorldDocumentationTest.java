@@ -44,7 +44,7 @@ public class HelloWorldDocumentationTest {
     @Test
     public void generateDocumentation()
             throws Exception {
-        mockMvc.perform(get("/hello-world/Brian").
+        mockMvc.perform(get("/hello-world/greet/Brian").
                 accept(APPLICATION_JSON)).
                 andExpect(status().isOk()).
                 andDo(document("hello-world", links()));

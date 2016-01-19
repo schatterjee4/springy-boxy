@@ -26,24 +26,22 @@ import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 
 @Component
-public class BigMoneyModule
-        extends SimpleModule {
+public class BigMoneyModule extends SimpleModule {
+
     public BigMoneyModule() {
-        super(BigMoney.class.getName(), unknownVersion(),
+        super(BigMoney.class.getName(),
+                unknownVersion(),
                 singletonMap(BigMoney.class, new BigMoneyJsonDeserializer()),
                 singletonList(new BigMoneyJsonSerializer()));
     }
 
-    public static class BigMoneyJsonDeserializer
-            extends StdScalarDeserializer<BigMoney> {
+    public static class BigMoneyJsonDeserializer extends StdScalarDeserializer<BigMoney> {
         protected BigMoneyJsonDeserializer() {
             super(BigMoney.class);
         }
 
         @Override
-        public BigMoney deserialize(final JsonParser json,
-                final DeserializationContext context)
-                throws IOException {
+        public BigMoney deserialize(final JsonParser json, final DeserializationContext context) throws IOException {
             final BigMoneyJson value = json.readValueAs(BigMoneyJson.class);
             return BigMoney.of(CurrencyUnit.of(value.getCurrency()),
                     value.getAmount());
