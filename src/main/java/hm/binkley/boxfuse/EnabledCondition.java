@@ -14,7 +14,7 @@ public class EnabledCondition
     public ConditionOutcome getMatchOutcome(final ConditionContext context,
             final AnnotatedTypeMetadata metadata) {
         final boolean enabled = (boolean) metadata.
-                getAnnotationAttributes(ToggledFeature.class.getName()).
+                getAnnotationAttributes(Enabled.class.getName()).
                 get("value");
         return enabled ? match() : noMatch("You're not enabled, Bob");
     }
