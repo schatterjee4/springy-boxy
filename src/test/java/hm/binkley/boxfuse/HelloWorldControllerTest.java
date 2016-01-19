@@ -12,10 +12,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import static hm.binkley.boxfuse.HelloWorldController.PATH;
 import static java.lang.String.format;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.springframework.test.web.servlet.request
+        .MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result
+        .MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result
+        .MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders
+        .standaloneSetup;
 
 @Ignore("TODO: how to mock mvc and still use @Enabled?")
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -37,6 +41,8 @@ public class HelloWorldControllerTest {
                 accept(APPLICATION_JSON_UTF8)).
                 andExpect(status().isOk()).
                 andExpect(content().
-                        json("{\"id\":1,\"content\":\"Hello, Brian!\",\"value\":$1.00}"));
+                        json("{\"id\":1,\"content\":\"Hello, Brian!\","
+                                + "\"value\":{\"currency\":\"USD\","
+                                + "\"amount\":1.00}}"));
     }
 }

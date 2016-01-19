@@ -5,13 +5,13 @@ import org.springframework.context.annotation.Bean;
 //@Configuration
 public class FooConfiguration {
     @Bean
-    @Enabled(true)
+    @ToggledFeature(true)
     public Foo foo() {
         return new Foo();
     }
 
     @Bean
-    @Enabled(false)
+    @ToggledFeature(false)
     public Foo fooToo() {
         return new Foo();
     }

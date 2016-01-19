@@ -3,8 +3,6 @@ package hm.binkley.boxfuse;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -26,17 +24,9 @@ public class Greeting {
     @JsonCreator
     public Greeting(@JsonProperty("id") final long id,
             @JsonProperty("content") @Nonnull final String content,
-            @JsonProperty("value")
-            @JsonDeserialize(using = BigMoneyJsonDeserializer.class) @Nonnull
-            final BigMoney value) {
+            @JsonProperty("value") @Nonnull final BigMoney value) {
         this.id = id;
         this.content = content;
         this.value = value;
-    }
-
-    @JsonSerialize(using = BigMoneyJsonSerializer.class)
-    @Nonnull
-    public BigMoney getValue() {
-        return value;
     }
 }

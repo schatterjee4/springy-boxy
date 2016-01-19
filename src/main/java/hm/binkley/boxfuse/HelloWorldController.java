@@ -20,14 +20,14 @@ public class HelloWorldController {
     private static final String russianTemplate = "Привет, %s!";
     private final AtomicLong counter = new AtomicLong();
 
-    @Enabled(true)
+    @ToggledFeature(true)
     @RequestMapping(value = "/{name}", method = GET)
     public Greeting sayHowdy(@PathVariable("name") final String name) {
         return new Greeting(counter.incrementAndGet(),
                 format(texanTemplate, name), BigMoney.parse("USD 1.00"));
     }
 
-    @Enabled(false)
+    @ToggledFeature(false)
     @RequestMapping(value = "/{name}", method = GET)
     public Greeting sayPrivet(@PathVariable("name") final String name) {
         return new Greeting(counter.incrementAndGet(),
