@@ -2,9 +2,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
-      naming_strategy: org.hibernate.cfg.ImprovedNamingStrategy
+      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
     database: H2
-    show-sql: true
   main:
     # TODO: banner-mode: off doesn't work?
     show-banner: false
