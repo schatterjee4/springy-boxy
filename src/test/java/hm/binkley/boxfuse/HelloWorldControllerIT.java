@@ -2,6 +2,7 @@ package hm.binkley.boxfuse;
 
 import hm.binkley.Application;
 import org.joda.money.BigMoney;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +16,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
-import static hm.binkley.boxfuse.HelloWorldController.FIRST_SSN;
 import static hm.binkley.boxfuse.HelloWorldController.PATH;
-import static hm.binkley.boxfuse.HelloWorldController.SECOND_SSN;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -32,14 +31,24 @@ public class HelloWorldControllerIT {
 
     @Autowired
     private MappingJackson2HttpMessageConverter converter;
+    private RestTemplate rest;
+
+    @Before
+    public void setUpRest() {
+        rest = new RestTemplate(singletonList(converter));
+    }
+
+    @Autowired
+    private AccountRepository accounts;
+    @Autowired
+    private SSNRepository ssns;
 
     /** @todo Why do I need to provide the converter? */
     @Test
     public void shouldGreet() {
-        final Greeting greeting = new RestTemplate(singletonList(converter)).
-                getForObject(
-                        format("http://localhost:%d/%s/greet/{name}", port,
-                                PATH), Greeting.class, "Brian");
+        final Greeting greeting = rest.getForObject(
+                format("http://localhost:%d/%s/greet/{name}", port, PATH),
+                Greeting.class, "Brian");
 
         assertThat(greeting.getId()).isEqualTo(1);
         assertThat(greeting.getContent()).isEqualTo("Howdy, Brian!");
@@ -48,11 +57,17 @@ public class HelloWorldControllerIT {
 
     @Test
     public void shouldFetchSSNs() {
-        final List<SSN> ssns = asList(
-                new RestTemplate(singletonList(converter)).getForObject(
-                        format("http://localhost:%d/%s/ssns", port, PATH),
-                        SSN[].class));
+        final Account bob = new Account("Bob");
+        final Account mary = new Account("Mary");
+        final List<Account> savedAccounts = accounts.save(asList(bob, mary));
+        final SSN abc123 = new SSN("abc", "123", savedAccounts);
+        final SSN pqr987 = new SSN("pqr", "987");
+        final List<SSN> savedSSNs = ssns.save(asList(abc123, pqr987));
 
-        assertThat(ssns).containsExactly(FIRST_SSN, SECOND_SSN);
+        final List<SSN> fetchedSSNs = asList(rest.getForObject(
+                format("http://localhost:%d/%s/ssns", port, PATH),
+                SSN[].class));
+
+        assertThat(fetchedSSNs).isEqualTo(savedSSNs);
     }
 }
