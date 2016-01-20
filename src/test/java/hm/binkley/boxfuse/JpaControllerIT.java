@@ -36,6 +36,18 @@ public class JpaControllerIT {
         rest = new RestTemplate(singletonList(converter));
     }
 
+    private List<SSN> savedSSNs;
+
+    @Before
+    public void setUpDatabase() {
+        final Account bob = new Account("Bob");
+        final Account mary = new Account("Mary");
+        final List<Account> savedAccounts = accounts.save(asList(bob, mary));
+        final SSN abc123 = new SSN("abc", "123", savedAccounts);
+        final SSN pqr987 = new SSN("pqr", "987");
+        savedSSNs = ssns.save(asList(abc123, pqr987));
+    }
+
     @Autowired
     private AccountRepository accounts;
     @Autowired
@@ -43,13 +55,6 @@ public class JpaControllerIT {
 
     @Test
     public void shouldFetchSSNs() {
-        final Account bob = new Account("Bob");
-        final Account mary = new Account("Mary");
-        final List<Account> savedAccounts = accounts.save(asList(bob, mary));
-        final SSN abc123 = new SSN("abc", "123", savedAccounts);
-        final SSN pqr987 = new SSN("pqr", "987");
-        final List<SSN> savedSSNs = ssns.save(asList(abc123, pqr987));
-
         final List<SSN> fetchedSSNs = asList(rest.getForObject(
                 format("http://localhost:%d/jpa/ssns", port), SSN[].class));
 
