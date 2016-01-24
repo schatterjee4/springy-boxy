@@ -1,5 +1,7 @@
 package hm.binkley;
 
+import hm.binkley.other.EnableOther;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,6 +19,7 @@ public class SubApplication {
                 run(args);
     }
 
+    @EnableOther
     public static class SubParent {
         @Bean
         public Foo foo() {
@@ -24,6 +27,7 @@ public class SubApplication {
         }
     }
 
+    @Getter
     @RequiredArgsConstructor
     @ToString
     public static class Foo {

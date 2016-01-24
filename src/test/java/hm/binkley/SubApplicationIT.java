@@ -5,18 +5,20 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringApplicationConfiguration(classes = SubApplication.class)
 @RunWith(SpringJUnit4ClassRunner.class)
+@TestPropertySource(properties = {"other.thing=ThingOne", "other.count=2"})
 public class SubApplicationIT {
     @Autowired
     private Bar bar;
 
     @Test
-    public void testy() {
-        assertThat(bar).isNotNull();
+    public void testBar() {
+        assertThat(bar.quxName()).isEqualTo("ThingOne");
     }
 }
